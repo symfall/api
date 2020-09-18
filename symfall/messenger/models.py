@@ -1,45 +1,37 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
-from .mixins import Timestamps
+from .mixins import TimestampMixin
+from .choices import STATUS
 
 
-class User(Timestamps, AbstractUser):
+class User(TimestampMixin, AbstractUser):
     """
     User model
     """
-    biography = models.TextField(max_length=200, null=True, blank=True)
+    biography = models.CharField(max_length=200, null=True, blank=True)
 
 
-class Chat(Timestamps, models.Model):
+class Chat(TimestampMixin, models.Model):
     """
     Chat model
     """
-    chat_name = models.TextField(max_length=50, null=True, blank=True)
+    title = models.CharField(max_length=50)
     creator = models.ForeignKey(User, on_delete=models.CASCADE, related_name='creator')
     invited = models.ManyToManyField(User, related_name='invited')
-    is_close_chat = models.BooleanField(default=False)
+    is_closed = models.BooleanField(default=False)
 
 
-class Message(Timestamps, models.Model):
+class Message(TimestampMixin, models.Model):
     """
     Message model
     """
     sender = models.ForeignKey(User, on_delete=models.CASCADE, related_name='sender')
     chat = models.ForeignKey(Chat, on_delete=models.CASCADE, related_name='recipient')
-    message = models.TextField(max_length=2000)
-
-    """
-    Create choice message status
-    """
-    STATUS = (
-        ('V', 'viewed'),
-        ('N', 'not viewed')
-    )
-
-    status = models.CharField(max_length=1, choices=STATUS)
+    message = models.TextField()
+    status = models.PositiveSmallIntegerField(choices=STATUS, default=STATUS.NOTVIEWED)
 
 
-class File(Timestamps, models.Model):
+class File(TimestampMixin, models.Model):
     """
     File model
     """
