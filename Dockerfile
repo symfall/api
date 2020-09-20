@@ -1,11 +1,7 @@
-FROM python:3.6
-
-# Copy source code of the project
+FROM python:3
+ENV PYTHONUNBUFFERED 1
+RUN mkdir /code
 WORKDIR /code
-COPY . .
-
-# Install needs libraries
-RUN apt-get update && \
-    apt-get -y install entr && \
-    pip install pipenv && \
-    pipenv install -v --system --deploy --dev
+COPY requirements.txt /code/
+RUN pip install -r requirements.txt
+COPY . /code/
