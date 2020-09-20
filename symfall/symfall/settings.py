@@ -28,6 +28,15 @@ DEBUG = int(os.environ.get("DEBUG", default=0))
 
 ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOWED_HOSTS").split(" ")
 
+# Email
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_USER = 'mail@gmail.com'
+EMAIL_PASSWORD = 'password'
+EMAIL_PORT = 587
+EMAIL_TLS = True
+
 
 # Application definition
 
@@ -93,6 +102,7 @@ DATABASES = {
 
     }
 }
+
 
 # Password validation
 # https://docs.djangoproject.com/en/3.1/ref/settings/#auth-password-validators

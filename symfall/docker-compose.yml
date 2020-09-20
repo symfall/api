@@ -15,9 +15,6 @@ services:
         - "8000:8000"
       env_file:
         - ./.env.dev
-<<<<<<< HEAD
         - ./.env.dist
-=======
->>>>>>> 7dcb38a4606909668786f55b3436f29af47c2bce
       depends_on:
         - db
