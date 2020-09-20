@@ -1,8 +1,5 @@
 Django>=3.0,<4.0
 psycopg2-binary>=2.8
 djangorestframework
-<<<<<<< HEAD
 django-extended-choices
-=======
-extended_choices
->>>>>>> 7dcb38a4606909668786f55b3436f29af47c2bce
+
