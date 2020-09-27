@@ -1,11 +1,9 @@
 from .models import User
 from django.contrib.auth.models import Group
 from rest_framework import viewsets, permissions
+from rest_framework.response import Response
 from .serializers import UserSerializer, GroupSerializer
-import logging
-
-
-logger = logging.getLogger(__name__)
+from rest_framework.views import APIView
 
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -14,7 +12,7 @@ class UserViewSet(viewsets.ModelViewSet):
     """
     queryset = User.objects.all().order_by('-date_joined')
     serializer_class = UserSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = (permissions.IsAuthenticated,)
 
 
 class GroupViewSet(viewsets.ModelViewSet):
@@ -23,6 +21,9 @@ class GroupViewSet(viewsets.ModelViewSet):
     """
     queryset = Group.objects.all()
     serializer_class = GroupSerializer
-    permission_classes = [permissions.IsAuthenticated]
+    permission_classes = (permissions.IsAuthenticated,)
 
 
+class HealthCheckViewSet(APIView):
+    def get(self, request):
+        return Response({'status': 'healthy'})
