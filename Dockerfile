@@ -1,8 +1,9 @@
 FROM python:3
-RUN pip install poetry
-ENV PYTHONUNBUFFERED=1
-RUN mkdir /code
+ENV PYTHONUNBUFFERED 1
+
 WORKDIR /code
-COPY pyproject.toml poetry.lock . /code/
-RUN pip install . /code/
-COPY . /code/
+COPY . .
+
+RUN pip install poetry
+RUN poetry config virtualenvs.create false
+RUN poetry install --no-dev
