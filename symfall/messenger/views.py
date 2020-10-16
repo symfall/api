@@ -1,9 +1,7 @@
 from .models import User
 from django.contrib.auth.models import Group
 from rest_framework import viewsets, permissions
-from rest_framework.response import Response
 from .serializers import UserSerializer, GroupSerializer
-from rest_framework.views import APIView
 
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -23,7 +21,3 @@ class GroupViewSet(viewsets.ModelViewSet):
     serializer_class = GroupSerializer
     permission_classes = (permissions.IsAuthenticated,)
 
-
-class HealthCheckViewSet(APIView):
-    def get(self, request):
-        return Response({'status': 'healthy'})
