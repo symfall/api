@@ -1,7 +1,9 @@
+from rest_framework.response import Response
 from .models import User
 from django.contrib.auth.models import Group
 from rest_framework import viewsets, permissions
-from .serializers import UserSerializer, GroupSerializer
+from .serializers import UserSerializer, GroupSerializer, ChatSerializer
+from .models import Chat
 
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -21,3 +23,11 @@ class GroupViewSet(viewsets.ModelViewSet):
     serializer_class = GroupSerializer
     permission_classes = (permissions.IsAuthenticated,)
 
+
+class ChatViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint that allows chats to be viewed or edited.
+    """
+    queryset = Chat.objects.all()
+    serializer_class = ChatSerializer
+    permission_classes = (permissions.IsAuthenticated,)
