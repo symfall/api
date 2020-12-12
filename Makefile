@@ -12,18 +12,17 @@ up: ## Start all or c=<name> containers in foreground
 start: ## Start all or c=<name> containers in background
 	docker-compose -f $(or $(DOCKER_COMPOSE_FILE), docker-compose.yml) up -d $(c)
 
-build: ## Build all or c=<name> containers in foreground
-	docker-compose -f $(or $(DOCKER_COMPOSE_FILE), docker-compose.yml) up --build $(c)
+build: ## Build all or c=<name> containers in background
+	docker-compose -f $(or $(DOCKER_COMPOSE_FILE), docker-compose.yml) up --build -d $(c)
 
-build-d: ## Build all or c=<name> containers in background
+build-f: ## Build all or c=<name> containers in foreground
 	docker-compose -f $(or $(DOCKER_COMPOSE_FILE), docker-compose.yml) up --build -d $(c)
 
 stop: ## Stop all or c=<name> containers
 	docker-compose -f $(or $(DOCKER_COMPOSE_FILE), docker-compose.yml) stop $(c)
 
 restart: ## Restart all or c=<name> containers
-	docker-compose -f $(or $(DOCKER_COMPOSE_FILE), docker-compose.yml) stop $(c)
-	docker-compose -f $(or $(DOCKER_COMPOSE_FILE), docker-compose.yml) up -d $(c)
+	docker-compose -f $(or $(DOCKER_COMPOSE_FILE), docker-compose.yml) restart $(c)
 
 rebuild: ## Rebuild all or c=<name> containers
 	docker-compose -f $(or $(DOCKER_COMPOSE_FILE), docker-compose.yml) down
@@ -46,22 +45,19 @@ images: ## Show all images
 	docker-compose -f $(or $(DOCKER_COMPOSE_FILE), docker-compose.yml) images
 
 exec: ## Exec container
-	docker-compose -f $(or $(DOCKER_COMPOSE_FILE), docker-compose.yml) exec $(or $(c), application) bash
+	docker-compose -f $(or $(DOCKER_COMPOSE_FILE), docker-compose.yml) exec $(or $(c), web) bash
 
 shell: ## Exec shell
-	docker-compose -f $(or $(DOCKER_COMPOSE_FILE), docker-compose.yml) exec $(or $(c), application) ipython
+	docker-compose -f $(or $(DOCKER_COMPOSE_FILE), docker-compose.yml) exec $(or $(c), web) ipython
 
 run-command: ## Run command in shell
-	docker-compose -f $(or $(DOCKER_COMPOSE_FILE), docker-compose.yml) exec $(or $(c), application) python -c="$(c)"
+	docker-compose -f $(or $(DOCKER_COMPOSE_FILE), docker-compose.yml) exec $(or $(c), web) python -c="$(e)"
 
 unittests: ## Show imaged
-	docker-compose -f $(or $(DOCKER_COMPOSE_FILE), docker-compose.yml) exec $(or $(c), application) invoke tests
+	docker-compose -f $(or $(DOCKER_COMPOSE_FILE), docker-compose.yml) exec $(or $(c), web) tests
 
 lint: ## Linting project code
-	docker-compose -f $(or $(DOCKER_COMPOSE_FILE), docker-compose.yml) exec $(or $(c), application) invoke lint
+	docker-compose -f $(or $(DOCKER_COMPOSE_FILE), docker-compose.yml) exec $(or $(c), web) prospector
 
-migrate-create:
-	docker-compose -f $(or $(DOCKER_COMPOSE_FILE), docker-compose.yml) exec $(or $(c), application) invoke migratecreate
-
-migrate-run:
-	docker-compose -f $(or $(DOCKER_COMPOSE_FILE), docker-compose.yml) exec $(or $(c), application) invoke migraterun
+manage:
+	docker-compose -f $(or $(DOCKER_COMPOSE_FILE), docker-compose.yml) exec $(or $(c), web) python symfall/manage.py $(e)

@@ -1,4 +1,7 @@
 #!/bin/sh
 
-export PYTHONPATH=src/
-find . -name '*.py' | entr -r python src/core
+# Run migrations
+python /code/symfall/manage.py migrate
+
+# Run server
+python /code/symfall/manage.py runserver 0.0.0.0:8000

@@ -4,6 +4,7 @@ ENV PYTHONUNBUFFERED 1
 WORKDIR /code
 COPY . .
 
-RUN pip install poetry
-RUN poetry config virtualenvs.create false
-RUN poetry install --no-dev
+RUN pip install -U pip && \
+    pip install poetry && \
+    poetry config virtualenvs.create false && \
+    poetry install --no-dev
