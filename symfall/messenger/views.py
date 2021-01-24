@@ -1,4 +1,4 @@
-from rest_framework.response import Response
+from rest_framework.pagination import PageNumberPagination
 from .models import User
 from django.contrib.auth.models import Group
 from rest_framework import viewsets, permissions
@@ -30,4 +30,4 @@ class ChatViewSet(viewsets.ModelViewSet):
     """
     queryset = Chat.objects.all()
     serializer_class = ChatSerializer
-    permission_classes = (permissions.IsAuthenticated,)
+    permission_classes = (permissions.AllowAny,)

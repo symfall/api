@@ -34,19 +34,29 @@ schema_view = get_schema_view(
    permission_classes=(permissions.AllowAny,),
 )
 
+chat_methods = views.ChatViewSet.as_view(
+    {
+        'get': 'list',
+        'post': 'create',
+        'put': 'update',
+        'delete': 'destroy'
+    }
+)
+
+
 router = routers.DefaultRouter()
 router.register(r'users', views.UserViewSet)
 router.register(r'groups', views.GroupViewSet)
-router.register(r'chat', views.ChatViewSet)
+router.register(r'chat', views.ChatViewSet, basename='chat')
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api-auth/', include('rest_framework.urls', namespace='rest_framework')),
-    path('healhtcheak', views.HealthCheckViewSet.as_view()),
 
+    url(r'^health_check', include('health_check.urls')),
     url(r'^swagger(?P<format>\.json|\.yaml)$', schema_view.without_ui(cache_timeout=0), name='schema-json'),
     url(r'^swagger/$', schema_view.with_ui('swagger', cache_timeout=0), name='schema-swagger-ui'),
     url(r'^redoc/$', schema_view.with_ui('redoc', cache_timeout=0), name='schema-redoc'),
 
-    path('', include((router.urls, 'core'))),
+    url('', include((router.urls, 'api'))),
 ]

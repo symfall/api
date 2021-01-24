@@ -5,7 +5,7 @@ description = "Simple messenger to improve self skills"
 authors = ["swaroggot", "valeriiduz"]
 
 [tool.poetry.dependencies]
-python = "3.8.6"
+python = "^3.8"
 django = "3.1.1"
 djangorestframework = "3.12.1"
 psycopg2-binary = "2.8.6"
