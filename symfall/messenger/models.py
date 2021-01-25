@@ -8,7 +8,7 @@ class User(TimestampMixin, AbstractUser):
     """
     User model
     """
-    biography = models.CharField(max_length=200, null=True, blank=True)
+    biography = models.TextField(max_length=200, null=True, blank=True)
 
 
 class Chat(TimestampMixin, models.Model):
@@ -19,6 +19,9 @@ class Chat(TimestampMixin, models.Model):
     creator = models.ForeignKey(User, on_delete=models.CASCADE, related_name='creator')
     invited = models.ManyToManyField(User, related_name='invited')
     is_closed = models.BooleanField(default=False)
+
+    def __str__(self):
+        return self.title
 
 
 class Message(TimestampMixin, models.Model):
