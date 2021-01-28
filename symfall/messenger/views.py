@@ -2,8 +2,8 @@ from rest_framework.pagination import PageNumberPagination
 from .models import User
 from django.contrib.auth.models import Group
 from rest_framework import viewsets, permissions
-from .serializers import UserSerializer, GroupSerializer, ChatSerializer
-from .models import Chat
+from .serializers import UserSerializer, GroupSerializer, ChatSerializer, MessageSerializer
+from .models import Chat, Message
 
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -30,4 +30,13 @@ class ChatViewSet(viewsets.ModelViewSet):
     """
     queryset = Chat.objects.all()
     serializer_class = ChatSerializer
+    permission_classes = (permissions.AllowAny,)
+
+
+class MessageViewSet(viewsets.ModelViewSet):
+    """
+    API endpoint that allows message to be viewed or edited.
+    """
+    queryset = Message.objects.all()
+    serializer_class = MessageSerializer
     permission_classes = (permissions.AllowAny,)
