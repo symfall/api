@@ -5,7 +5,7 @@ from .models import User, Chat
 
 
 class HealthCheckViewTest(APITestCase):
-    
+
     def test_health_check(self):
         """
         Method for viewing health check in json format
@@ -46,7 +46,7 @@ class GetChatViewTest(APITestCase):
             'previous': None,
             'results': [{
                 'title': 'test-chat',
-                'creator': 6,
+                'creator': 9,
                 'invited': [],
                 'is_closed': False
             }]
@@ -124,4 +124,94 @@ class EditChatViewTest(APITestCase):
             reverse('api:chat-detail', kwargs={'pk': self.test_chat_edit.pk}),
             data=json.dumps(self.edit_chat),
             content_type='application/json')
+        self.assertEqual(response.status_code, 200)
+
+
+class GetUserViewTest(APITestCase):
+
+    def setUp(self) -> None:
+        self.user = User.objects.create_user(
+            username='test_user',
+            password='1234567',
+            email='test_user@gmail.com',
+        )
+
+    def test_get_user(self):
+        response = self.client.get(reverse('api:user-list'), data={'format': 'json'})
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(
+            {
+                'count': 1,
+                'next': None,
+                'previous': None,
+                'results':
+                    [
+                        {
+                            'username': 'test_user',
+                            'email': 'test_user@gmail.com',
+                            'groups': [], 'last_login': None,
+                            'first_name': '',
+                            'last_name': ''
+                        }
+                    ]
+            }, response.json()
+        )
+
+
+class AddUserViewTest(APITestCase):
+
+    def setUp(self) -> None:
+        self.user = {
+            'username': 'test_add_user',
+            'password': '1234567',
+            'email': 'test_add_user@gmail.com'
+        }
+
+    def test_add_user(self):
+
+        response = self.client.post(
+            reverse('api:user-list'),
+            data=json.dumps(self.user),
+            content_type='application/json'
+        )
+        self.assertEqual(response.status_code, 201)
+
+
+class DeleteUserViewTest(APITestCase):
+
+    def setUp(self) -> None:
+        self.user = User.objects.create_user(
+            username='test_delete_user',
+            password='1234567',
+            email='test_delete_user@gmail.com',
+        )
+
+    def test_delete_user(self):
+        response = self.client.delete(
+            reverse('api:user-detail', kwargs={'pk': self.user.pk})
+        )
+        self.assertEqual(response.status_code, 204)
+
+
+class EditUserViewTest(APITestCase):
+
+    def setUp(self) -> None:
+        self.user = User.objects.create_user(
+            username='test_edit_user',
+            password='1234567',
+            email='test_edit_user@gmail.com',
+        )
+
+        self.edit_user = {
+            'username': 'test_user_edit',
+            'password': '3214532',
+            'email': 'test_user_edit@gmail.com'
+        }
+
+    def test_edit_user(self):
+        response = self.client.put(
+            reverse('api:user-detail', kwargs={'pk': self.user.pk}),
+            json.dumps(self.edit_user),
+            content_type='application/json'
+        )
         self.assertEqual(response.status_code, 200)

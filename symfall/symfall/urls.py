@@ -45,7 +45,7 @@ chat_methods = views.ChatViewSet.as_view(
 
 
 router = routers.DefaultRouter()
-router.register(r'users', views.UserViewSet)
+router.register(r'users', views.UserViewSet, basename='user')
 router.register(r'groups', views.GroupViewSet)
 router.register(r'chat', views.ChatViewSet, basename='chat')
 
