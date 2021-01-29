@@ -1,9 +1,10 @@
 import json
 from django.urls import reverse
 from rest_framework.test import APITestCase
-from .models import User, Chat
+from .models import User, Chat, Message
 
 
+# -> HealthCheckView test
 class HealthCheckViewTest(APITestCase):
 
     def test_health_check(self):
@@ -22,6 +23,7 @@ class HealthCheckViewTest(APITestCase):
         )
 
 
+# -> Chat test's
 class GetChatViewTest(APITestCase):
 
     def setUp(self) -> None:
@@ -214,4 +216,123 @@ class EditUserViewTest(APITestCase):
             json.dumps(self.edit_user),
             content_type='application/json'
         )
+        self.assertEqual(response.status_code, 200)
+
+
+# -> Message tests
+class GetMessageViewTest(APITestCase):
+
+    def setUp(self) -> None:
+        test_sender = User.objects.create_user(
+            username='test_sender',
+            password='1234567'
+        )
+        test_chat = Chat.objects.create(
+            title='test-chat',
+            creator=test_sender,
+        )
+        self.test_message = Message.objects.create(
+            sender=test_sender,
+            chat=test_chat,
+            message='hello world',
+            status=2
+        )
+
+    def test_get_message(self):
+        response = self.client.get(reverse('api:message-list'), data={'format': 'json'})
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual({
+            'count': 1,
+            'next': None,
+            'previous': None,
+            'results': [{
+                'sender': 10,
+                'chat': 8,
+                'message': 'hello world',
+                'status': 2
+            }]
+        }, response.json())
+
+
+class CreateMessageViewTest(APITestCase):
+
+    def setUp(self) -> None:
+        self.test_sender = User.objects.create_user(
+            username='test_add_sender',
+            password='1234567'
+        )
+        self.test_chat = Chat.objects.create(
+            title='test-chat',
+            creator=self.test_sender,
+        )
+        self.message = {
+            'sender': self.test_sender.pk,
+            'chat': self.test_chat.pk,
+            'message': 'add new hello world',
+            'status': 1
+        }
+
+    def test_create_chat(self):
+        response = self.client.post(
+            reverse('api:message-list'),
+            data=json.dumps(self.message),
+            content_type='application/json'
+        )
+        self.assertEqual(response.status_code, 201)
+
+
+class DeleteMessageViewTest(APITestCase):
+
+    def setUp(self) -> None:
+        self.test_sender = User.objects.create_user(
+            username='test_delete_sender',
+            password='1234567'
+        )
+        self.test_chat = Chat.objects.create(
+            title='test-chat',
+            creator=self.test_sender,
+        )
+        self.test_delete_message = Message.objects.create(
+            sender=self.test_sender,
+            chat=self.test_chat,
+            message='delete hello world',
+            status=2
+        )
+
+    def test_delete_message(self):
+        response = self.client.delete(
+            reverse('api:message-detail', kwargs={'pk': self.test_delete_message.pk})
+        )
+        self.assertEqual(response.status_code, 204)
+
+
+class EditMessageViewTest(APITestCase):
+
+    def setUp(self) -> None:
+        self.test_sender = User.objects.create_user(
+            username='test_edit_sender',
+            password='1234567'
+        )
+        self.test_chat = Chat.objects.create(
+            title='test-chat',
+            creator=self.test_sender,
+        )
+        self.test_edit_message = Message.objects.create(
+            sender=self.test_sender,
+            chat=self.test_chat,
+            message='hello world',
+            status=2
+        )
+        self.edit_message = {
+            'sender': self.test_sender.pk,
+            'chat': self.test_chat.pk,
+            'message': 'edit hello world',
+            'status': 1
+        }
+
+    def test_edit_message(self):
+        response = self.client.put(
+            reverse('api:message-detail', kwargs={'pk': self.test_edit_message.pk}),
+            data=json.dumps(self.edit_message),
+            content_type='application/json')
         self.assertEqual(response.status_code, 200)

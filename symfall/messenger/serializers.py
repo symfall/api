@@ -1,7 +1,7 @@
 from django.contrib.auth import get_user_model
 from django.contrib.auth.models import Group
 from rest_framework import serializers
-from .models import Chat
+from .models import Chat, Message
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -34,6 +34,17 @@ class ChatSerializer(serializers.ModelSerializer):
             'creator',
             'invited',
             'is_closed',
+        )
+
+
+class MessageSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Message
+        fields = (
+            'sender',
+            'chat',
+            'message',
+            'status',
         )
 
 
