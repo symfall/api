@@ -1,6 +1,8 @@
 from django.contrib.auth import get_user_model
-from django.contrib.auth.models import Group
 from rest_framework import serializers
+
+from messenger.choice import ChoiceField
+from .choices import STATUS
 from .models import Chat, Message
 
 
@@ -18,15 +20,8 @@ class UserSerializer(serializers.ModelSerializer):
         )
 
 
-class GroupSerializer(serializers.HyperlinkedModelSerializer):
-    class Meta:
-        model = Group
-        fields = (
-            'name',
-        )
-
-
 class ChatSerializer(serializers.ModelSerializer):
+
     class Meta:
         model = Chat
         fields = (
@@ -37,7 +32,24 @@ class ChatSerializer(serializers.ModelSerializer):
         )
 
 
+class ChatViewSerializer(serializers.ModelSerializer):
+    creator = UserSerializer()
+    invited = UserSerializer(many=True)
+
+    class Meta:
+        model = Chat
+        fields = (
+            'title',
+            'creator',
+            'invited',
+            'is_closed',
+            'created_at',
+            'updated_at',
+        )
+
+
 class MessageSerializer(serializers.ModelSerializer):
+
     class Meta:
         model = Message
         fields = (
@@ -48,3 +60,18 @@ class MessageSerializer(serializers.ModelSerializer):
         )
 
 
+class MessageViewSerializer(serializers.ModelSerializer):
+    sender = UserSerializer()
+    chat = ChatViewSerializer()
+    status = ChoiceField(choices=STATUS.choices)
+
+    class Meta:
+        model = Message
+        fields = (
+            'sender',
+            'chat',
+            'message',
+            'status',
+            'created_at',
+            'updated_at',
+        )

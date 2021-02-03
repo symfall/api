@@ -1,5 +1,7 @@
 import json
+
 from django.urls import reverse
+from freezegun import freeze_time
 from rest_framework.test import APITestCase
 from .models import User, Chat, Message
 
@@ -26,6 +28,7 @@ class HealthCheckViewTest(APITestCase):
 # -> Chat test's
 class GetChatViewTest(APITestCase):
 
+    @freeze_time('1991-02-20 00:00:00')
     def setUp(self) -> None:
         self.test_creator = User.objects.create_user(
             username='test_creator',
@@ -37,6 +40,7 @@ class GetChatViewTest(APITestCase):
         )
 
     def test_get_chat(self):
+        self.maxDiff = None
         response = self.client.get(
             reverse('api:chat-list'),
             data={'format': 'json'}
@@ -48,9 +52,18 @@ class GetChatViewTest(APITestCase):
             'previous': None,
             'results': [{
                 'title': 'test-chat',
-                'creator': 9,
+                'creator': {
+                    'email': '',
+                    'first_name': '',
+                    'groups': [],
+                    'last_login': None,
+                    'last_name': '',
+                    'username': 'test_creator'
+                },
                 'invited': [],
-                'is_closed': False
+                'is_closed': False,
+                'created_at': '1991-02-20T00:00:00Z',
+                'updated_at': '1991-02-20T00:00:00Z',
             }]
         }, response.json())
 
@@ -222,6 +235,7 @@ class EditUserViewTest(APITestCase):
 # -> Message tests
 class GetMessageViewTest(APITestCase):
 
+    @freeze_time('1991-02-20 00:00:00')
     def setUp(self) -> None:
         test_sender = User.objects.create_user(
             username='test_sender',
@@ -239,6 +253,7 @@ class GetMessageViewTest(APITestCase):
         )
 
     def test_get_message(self):
+        self.maxDiff = None
         response = self.client.get(reverse('api:message-list'), data={'format': 'json'})
         self.assertEqual(response.status_code, 200)
         self.assertEqual({
@@ -246,10 +261,29 @@ class GetMessageViewTest(APITestCase):
             'next': None,
             'previous': None,
             'results': [{
-                'sender': 10,
-                'chat': 8,
+                'sender': {
+                    'email': '',
+                    'first_name': '',
+                    'groups': [],
+                    'last_login': None,
+                    'last_name': '',
+                    'username': 'test_sender'
+                },
+                'chat': {'created_at': '1991-02-20T00:00:00Z',
+                         'creator': {'email': '',
+                                     'first_name': '',
+                                     'groups': [],
+                                     'last_login': None,
+                                     'last_name': '',
+                                     'username': 'test_sender'},
+                         'invited': [],
+                         'is_closed': False,
+                         'title': 'test-chat',
+                         'updated_at': '1991-02-20T00:00:00Z'},
                 'message': 'hello world',
-                'status': 2
+                'status': 'not viewed',
+                'created_at': '1991-02-20T00:00:00Z',
+                'updated_at': '1991-02-20T00:00:00Z'
             }]
         }, response.json())
 
@@ -308,6 +342,7 @@ class DeleteMessageViewTest(APITestCase):
 
 class EditMessageViewTest(APITestCase):
 
+    @freeze_time('1991-02-20 00:00:00')
     def setUp(self) -> None:
         self.test_sender = User.objects.create_user(
             username='test_edit_sender',
