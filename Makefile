@@ -45,19 +45,14 @@ images: ## Show all images
 	docker-compose -f $(or $(DOCKER_COMPOSE_FILE), docker-compose.yml) images
 
 exec: ## Exec container
+	docker-compose -f $(or $(DOCKER_COMPOSE_FILE), docker-compose.yml) exec $(or $(c), web) poetry install
 	docker-compose -f $(or $(DOCKER_COMPOSE_FILE), docker-compose.yml) exec $(or $(c), web) bash
 
 shell: ## Exec shell
-	docker-compose -f $(or $(DOCKER_COMPOSE_FILE), docker-compose.yml) exec $(or $(c), web) ipython
+	docker-compose -f $(or $(DOCKER_COMPOSE_FILE), docker-compose.yml) exec $(or $(c), web) python src/manage.py shell_plus
 
 run-command: ## Run command in shell
 	docker-compose -f $(or $(DOCKER_COMPOSE_FILE), docker-compose.yml) exec $(or $(c), web) python -c="$(e)"
 
-unittests: ## Show imaged
-	docker-compose -f $(or $(DOCKER_COMPOSE_FILE), docker-compose.yml) exec $(or $(c), web) tests
-
-lint: ## Linting project code
-	docker-compose -f $(or $(DOCKER_COMPOSE_FILE), docker-compose.yml) exec $(or $(c), web) prospector
-
 manage:
-	docker-compose -f $(or $(DOCKER_COMPOSE_FILE), docker-compose.yml) exec $(or $(c), web) python symfall/manage.py $(e)
+	docker-compose -f $(or $(DOCKER_COMPOSE_FILE), docker-compose.yml) exec $(or $(c), web) python src/manage.py $(e)

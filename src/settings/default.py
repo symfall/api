@@ -87,6 +87,8 @@ INSTALLED_APPS = [
     'health_check.contrib.psutil',
     'health_check.contrib.migrations',
 
+    'django_extensions',
+
     'rest_framework',
     'drf_yasg',
 
@@ -103,7 +105,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
 
-ROOT_URLCONF = 'symfall.urls'
+ROOT_URLCONF = 'api.urls'
 
 REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
@@ -132,7 +134,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'symfall.wsgi.application'
+WSGI_APPLICATION = 'api.wsgi.application'
 
 AUTH_USER_MODEL = 'messenger.User'
 

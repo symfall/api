@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # Run migrations
-python /code/symfall/manage.py migrate
+python /code/src/manage.py migrate
 
 # Run server
-python /code/symfall/manage.py runserver 0.0.0.0:8000
+python /code/src/manage.py runserver 0.0.0.0:8000

@@ -36,7 +36,6 @@ schema_view = get_schema_view(
 
 router = routers.DefaultRouter()
 router.register(r'users', views.UserViewSet, basename='user')
-router.register(r'groups', views.GroupViewSet)
 router.register(r'chat', views.ChatViewSet, basename='chat')
 router.register(r'message', views.MessageViewSet, basename='message')
 
