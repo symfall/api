@@ -197,3 +197,11 @@ EMAIL_USER = os.environ.get("EMAIL_USER")
 EMAIL_PASSWORD = os.environ.get("EMAIL_PASSWORD")
 EMAIL_PORT = os.environ.get("EMAIL_PORT")
 EMAIL_TLS = int(os.environ.get("EMAIL_TLS"))
+
+
+DEFAULT_FILE_STORAGE = 'storages.backends.gs.GSBotoStorage'
+STATICFILES_STORAGE = 'storages.backends.gs.GSBotoStorage'
+
+GS_ACCESS_KEY_ID = os.environ.get("GS_ACCESS_KEY_ID")
+GS_SECRET_ACCESS_KEY = os.environ.get("GS_SECRET_ACCESS_KEY")
+GS_BUCKET_NAME = os.environ.get("GS_BUCKET_NAME")
