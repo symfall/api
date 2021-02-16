@@ -10,7 +10,7 @@ class UserViewSet(viewsets.ModelViewSet):
     """
     queryset = User.objects.order_by('-date_joined')
     serializer_class = UserSerializer
-    permission_classes = (permissions.AllowAny,)
+    permission_classes = (permissions.IsAuthenticated,)
 
 
 class ChatViewSet(viewsets.ModelViewSet):
@@ -18,7 +18,7 @@ class ChatViewSet(viewsets.ModelViewSet):
     API endpoint that allows chats to be viewed or edited.
     """
     queryset = Chat.objects.order_by('-updated_at')
-    permission_classes = (permissions.AllowAny,)
+    permission_classes = (permissions.IsAuthenticated,)
 
     def get_serializer_class(self):
         if self.request.method == 'GET':
@@ -32,7 +32,7 @@ class MessageViewSet(viewsets.ModelViewSet):
     API endpoint that allows message to be viewed or edited.
     """
     queryset = Message.objects.order_by('-created_at')
-    permission_classes = (permissions.AllowAny,)
+    permission_classes = (permissions.IsAuthenticated,)
 
     def get_serializer_class(self):
         if self.request.method == 'GET':
