@@ -3,7 +3,7 @@ from rest_framework import serializers
 
 from messenger.choice import ChoiceField
 from .choices import STATUS
-from .models import Chat, Message
+from .models import Chat, Message, File
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -74,4 +74,13 @@ class MessageViewSerializer(serializers.ModelSerializer):
             'status',
             'created_at',
             'updated_at',
+        )
+
+
+class FileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = File
+        fields = (
+            'document',
+            'message',
         )

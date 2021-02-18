@@ -113,3 +113,5 @@ dmypy.json
 # IDE
 .idea/
 .vscode/
+media/
+static/
