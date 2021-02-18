@@ -4,7 +4,7 @@ from unittest import skip
 from django.urls import reverse
 from freezegun import freeze_time
 from rest_framework.test import APITestCase
-from .models import User, Chat, Message
+from .models import User, Chat, Message, File
 
 
 # -> HealthCheckView test
@@ -181,7 +181,6 @@ class GetUserViewTest(APITestCase):
         )
 
 
-@skip('Test create')
 class AddUserViewTest(APITestCase):
 
     def setUp(self) -> None:
@@ -192,7 +191,6 @@ class AddUserViewTest(APITestCase):
         }
 
     def test_add_user(self):
-        self.client.login(username='test_add_user', password='1234567')
         response = self.client.post(
             reverse('api:user-list'),
             data=json.dumps(self.user),
@@ -387,3 +385,76 @@ class EditMessageViewTest(APITestCase):
             data=json.dumps(self.edit_message),
             content_type='application/json')
         self.assertEqual(response.status_code, 200)
+
+
+class GetFileViewTest(APITestCase):
+
+    def setUp(self) -> None:
+        self.test_creator = User.objects.create_user(
+            username='test_creator',
+            password='12345',
+        )
+        self.test_chat = Chat.objects.create(
+            title='test-chat',
+            creator=self.test_creator,
+        )
+        self.test_message = Message.objects.create(
+            sender=self.test_creator,
+            chat=self.test_chat,
+            message='test-message',
+            status=2,
+        )
+        self.test_file = File.objects.create(
+            document=None,
+            message=self.test_message,
+        )
+
+    def test_get_file(self):
+        self.client.login(username='test_creator', password='12345')
+        response = self.client.get(
+            reverse('api:file-list'),
+            data={'format': 'json'}
+        )
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual({
+            'count': 1,
+            'next': None,
+            'previous': None,
+            'results':
+                [
+                    {
+                        'document': None,
+                        'message': 5
+                    }
+                ]
+        }, response.json())
+
+
+class DeleteFileTest(APITestCase):
+
+    def setUp(self) -> None:
+        self.test_creator = User.objects.create_user(
+            username='test_creator',
+            password='12345',
+        )
+        self.test_chat = Chat.objects.create(
+            title='test-chat',
+            creator=self.test_creator,
+        )
+        self.test_message = Message.objects.create(
+            sender=self.test_creator,
+            chat=self.test_chat,
+            message='test-message',
+            status=2,
+        )
+        self.test_file = File.objects.create(
+            document=None,
+            message=self.test_message,
+        )
+
+    def test_delete_file(self):
+        self.client.login(username='test_creator', password='12345')
+        response = self.client.delete(
+            reverse('api:file-detail', kwargs={'pk': self.test_file.pk})
+        )
+        self.assertEqual(response.status_code, 204)

@@ -13,6 +13,7 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 from pathlib import Path
 import os
 import sentry_sdk
+from django.conf.global_settings import LOGIN_URL
 from sentry_sdk.integrations.django import DjangoIntegration
 import logging
 
@@ -110,8 +111,15 @@ ROOT_URLCONF = 'urls'
 REST_FRAMEWORK = {
     'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
     'DEFAULT_SCHEMA_CLASS': 'rest_framework.schemas.coreapi.AutoSchema',
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.SessionAuthentication',
+    ),
+
     'PAGE_SIZE': 10
 }
+
+MEDIA_ROOT = BASE_DIR / 'media/'
+MEDIA_URL = '/media/'
 
 HEALTH_CHECK = {
     'DISK_USAGE_MAX': 90,
@@ -199,9 +207,16 @@ EMAIL_PORT = os.environ.get("EMAIL_PORT")
 EMAIL_TLS = int(os.environ.get("EMAIL_TLS"))
 
 
-DEFAULT_FILE_STORAGE = 'storages.backends.gs.GSBotoStorage'
-STATICFILES_STORAGE = 'storages.backends.gs.GSBotoStorage'
+# DEFAULT_FILE_STORAGE = 'storages.backends.gcloud.GoogleCloudStorage'
+# STATICFILES_STORAGE = 'storages.backends.gcloud.GoogleCloudStorage'
+#
+# GS_ACCESS_KEY_ID = os.environ.get("GS_ACCESS_KEY_ID")
+# GS_SECRET_ACCESS_KEY = os.environ.get("GS_SECRET_ACCESS_KEY")
+# GS_BUCKET_NAME = os.environ.get("GS_BUCKET_NAME")
 
-GS_ACCESS_KEY_ID = os.environ.get("GS_ACCESS_KEY_ID")
-GS_SECRET_ACCESS_KEY = os.environ.get("GS_SECRET_ACCESS_KEY")
-GS_BUCKET_NAME = os.environ.get("GS_BUCKET_NAME")
+
+SWAGGER_SETTINGS = {
+    'USE_SESSION_AUTH': True,
+    'LOGIN_URL': '/admin/login/',
+    'LOGOUT_URL': '/admin/logout/',
+}
