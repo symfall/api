@@ -118,6 +118,11 @@ REST_FRAMEWORK = {
     'PAGE_SIZE': 10
 }
 
+FILE_UPLOAD_HANDLERS = [
+    "django.core.files.uploadhandler.MemoryFileUploadHandler",
+    # "django.core.files.uploadhandler.TemporaryFileUploadHandler",
+]
+
 MEDIA_ROOT = BASE_DIR / 'media/'
 MEDIA_URL = '/media/'
 
