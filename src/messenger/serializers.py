@@ -3,7 +3,7 @@ from rest_framework import serializers
 
 from messenger.choice import ChoiceField
 from .choices import STATUS
-from .models import Chat, Message, File
+from .models import Chat, Message, File, User
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -13,7 +13,6 @@ class UserSerializer(serializers.ModelSerializer):
         fields = (
             'username',
             'email',
-            'groups',
             'last_login',
             'first_name',
             'last_name',
@@ -84,3 +83,33 @@ class FileSerializer(serializers.ModelSerializer):
             'document',
             'message',
         )
+
+
+class LoginSerializer(serializers.Serializer):
+    username = serializers.CharField(max_length=300, required=True)
+    password = serializers.CharField(required=True)
+
+
+class EmptySerializer(serializers.Serializer):
+
+    success = serializers.CharField(default='Successfully logged out.')
+
+# class RegisterSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = User
+#         fields = ['email', 'password', 'first_name', 'last_name', 'gender', 'tshirt_size', 'phone_number']
+#
+#     def validate_email(self, value):
+#         if User.objects.filter(email=value).exists():
+#             raise serializers.ValidationError("Email is already taken.")
+#         return UserManager.normalize_email(value)
+#
+#
+# class AuthUserSerializer(UserSerializer):
+#     auth_token = serializers.SerializerMethodField()
+#
+#     class Meta(UserSerializer.Meta):
+#         fields = UserSerializer.Meta.fields + ['auth_token']
+#
+#     def get_auth_token(self, obj):
+#         return tokens.get_token_for_user(obj, "authentication")

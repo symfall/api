@@ -1,17 +1,13 @@
+from django.contrib.auth import get_user_model
 from django.db import models
 from django.contrib.auth.models import AbstractUser
-from .mixins import TimestampMixin
+from .mixins import TimestampMixin, UUIDModel
 from .choices import STATUS
 
-
-class User(TimestampMixin, AbstractUser):
-    """
-    User model
-    """
-    biography = models.TextField(max_length=200, null=True, blank=True)
+User = get_user_model()
 
 
-class Chat(TimestampMixin, models.Model):
+class Chat(UUIDModel, TimestampMixin, models.Model):
     """
     Chat model
     """
@@ -24,7 +20,7 @@ class Chat(TimestampMixin, models.Model):
         return self.title
 
 
-class Message(TimestampMixin, models.Model):
+class Message(UUIDModel, TimestampMixin, models.Model):
     """
     Message model
     """
@@ -34,7 +30,7 @@ class Message(TimestampMixin, models.Model):
     status = models.PositiveSmallIntegerField(choices=STATUS, default=STATUS.NOTVIEWED)
 
 
-class File(TimestampMixin, models.Model):
+class File(UUIDModel, TimestampMixin, models.Model):
     """
     File model
     """

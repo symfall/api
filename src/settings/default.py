@@ -88,7 +88,6 @@ INSTALLED_APPS = [
     'health_check.contrib.migrations',
 
     'django_extensions',
-    'channels',
 
     'rest_framework',
     'drf_yasg',
@@ -123,7 +122,7 @@ FILE_UPLOAD_HANDLERS = [
     # "django.core.files.uploadhandler.TemporaryFileUploadHandler",
 ]
 
-MEDIA_ROOT = BASE_DIR / 'media/'
+MEDIA_ROOT = BASE_DIR.parent / 'media/'
 MEDIA_URL = '/media/'
 
 HEALTH_CHECK = {
@@ -159,7 +158,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'server.wsgi.application'
 
-AUTH_USER_MODEL = 'messenger.User'
+AUTH_USER_MODEL = 'auth.User'
 
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
