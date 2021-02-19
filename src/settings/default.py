@@ -12,10 +12,9 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 
 from pathlib import Path
 import os
-import sentry_sdk
-from django.conf.global_settings import LOGIN_URL
-from sentry_sdk.integrations.django import DjangoIntegration
 import logging
+import sentry_sdk
+from sentry_sdk.integrations.django import DjangoIntegration
 
 sentry_sdk.init(
     dsn=os.environ.get("SENTRY_DSN"),
@@ -89,6 +88,7 @@ INSTALLED_APPS = [
     'health_check.contrib.migrations',
 
     'django_extensions',
+    'channels',
 
     'rest_framework',
     'drf_yasg',
@@ -129,6 +129,16 @@ MEDIA_URL = '/media/'
 HEALTH_CHECK = {
     'DISK_USAGE_MAX': 90,
     'MEMORY_MIN': 100,
+}
+
+ASGI_APPLICATION = "server.asgi.application"
+CHANNEL_LAYERS = {
+    'default': {
+        'BACKEND': 'channels_redis.core.RedisChannelLayer',
+        'CONFIG': {
+            "hosts": [('redis', 6379)],
+        },
+    },
 }
 
 TEMPLATES = [
