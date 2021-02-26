@@ -20,8 +20,10 @@ from django.contrib import admin
 from django.urls import include, path
 from drf_yasg import openapi
 from drf_yasg.views import get_schema_view
-from messenger import views
 from rest_framework import permissions, routers
+
+from authentication import views as authentication_views
+from messenger import views as messenger_views
 
 schema_view = get_schema_view(
    openapi.Info(
@@ -37,10 +39,12 @@ schema_view = get_schema_view(
 )
 
 router = routers.DefaultRouter()
-router.register(r'users', views.UserViewSet, basename='user')
-router.register(r'chat', views.ChatViewSet, basename='chat')
-router.register(r'message', views.MessageViewSet, basename='message')
-router.register(r'file', views.FileViewSet, basename='file')
+router.register(r'auth', authentication_views.AuthViewSet, basename='auth')
+
+router.register(r'users', messenger_views.UserViewSet, basename='user')
+router.register(r'chat', messenger_views.ChatViewSet, basename='chat')
+router.register(r'message', messenger_views.MessageViewSet, basename='message')
+router.register(r'file', messenger_views.FileViewSet, basename='file')
 
 urlpatterns = [
     path('admin/', admin.site.urls),
