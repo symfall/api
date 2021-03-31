@@ -20,42 +20,41 @@ sentry_sdk.init(
     dsn=os.environ.get("SENTRY_DSN"),
     integrations=[DjangoIntegration()],
     traces_sample_rate=1.0,
-
     # If you wish to associate users to errors (assuming you are using
     # django.contrib.auth) you may enable sending PII data.
-    send_default_pii=True
+    send_default_pii=True,
 )
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve(strict=True).parent.parent
 
 LOGGING = {
-    'version': 1,
-    'disable_existing_loggers': False,
-    'formatters': {
-        'simple': {
-            'format': '[%(asctime)s] %(levelname)s %(message)s',
+    "version": 1,
+    "disable_existing_loggers": False,
+    "formatters": {
+        "simple": {
+            "format": "[%(asctime)s] %(levelname)s %(message)s",
         },
-        'verbose': {
-            'format': '[%(asctime)s] %(levelname)s [%(name)s.%(funcName)s:%(lineno)d] %(message)s',
-        },
-    },
-    'root': {
-        'level': logging.DEBUG,
-        'handlers': ['console'],
-    },
-    'handlers': {
-        'console': {
-            'level': logging.DEBUG,
-            'class': 'logging.StreamHandler',
-            'formatter': 'simple',
+        "verbose": {
+            "format": "[%(asctime)s] %(levelname)s [%(name)s.%(funcName)s:%(lineno)d] %(message)s",
         },
     },
-    'loggers': {
-        'django.request': {
-            'handlers': ['console'],
-            'level': logging.DEBUG,
-            'propagate': False,
+    "root": {
+        "level": logging.DEBUG,
+        "handlers": ["console"],
+    },
+    "handlers": {
+        "console": {
+            "level": logging.DEBUG,
+            "class": "logging.StreamHandler",
+            "formatter": "simple",
+        },
+    },
+    "loggers": {
+        "django.request": {
+            "handlers": ["console"],
+            "level": logging.DEBUG,
+            "propagate": False,
         },
     },
 }
@@ -81,6 +80,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
 
+    # 'corsheaders',
+
     'health_check',
     'health_check.db',
     'health_check.cache',
@@ -96,25 +97,34 @@ INSTALLED_APPS = [
 ]
 
 MIDDLEWARE = [
-    'django.middleware.security.SecurityMiddleware',
-    'django.contrib.sessions.middleware.SessionMiddleware',
-    'django.middleware.common.CommonMiddleware',
-    'django.middleware.csrf.CsrfViewMiddleware',
-    'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'django.contrib.messages.middleware.MessageMiddleware',
-    'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    # 'corsheaders.middleware.CorsMiddleware',
+    # 'django.middleware.common.CommonMiddleware',
+
+    "django.middleware.security.SecurityMiddleware",
+    "django.contrib.sessions.middleware.SessionMiddleware",
+    "django.middleware.common.CommonMiddleware",
+    "django.middleware.csrf.CsrfViewMiddleware",
+    "django.contrib.auth.middleware.AuthenticationMiddleware",
+    "django.contrib.messages.middleware.MessageMiddleware",
+    "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
-ROOT_URLCONF = 'urls'
+# CORS_ALLOWED_ORIGINS = [
+#     "https://google.com",
+#     "http://localhost:8080",
+#     "http://127.0.0.1:9000"
+# ]
+
+ROOT_URLCONF = "urls"
 
 REST_FRAMEWORK = {
-    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
-    'DEFAULT_SCHEMA_CLASS': 'rest_framework.schemas.coreapi.AutoSchema',
-    'DEFAULT_AUTHENTICATION_CLASSES': (
-        'rest_framework.authentication.SessionAuthentication',
+    "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
+    "DEFAULT_SCHEMA_CLASS": "rest_framework.schemas.coreapi.AutoSchema",
+    "DEFAULT_AUTHENTICATION_CLASSES": (
+        "rest_framework.authentication.SessionAuthentication",
+        # "rest_framework.authentication.TokenAuthentication",
     ),
-
-    'PAGE_SIZE': 10
+    "PAGE_SIZE": 10,
 }
 
 FILE_UPLOAD_HANDLERS = [
@@ -122,56 +132,57 @@ FILE_UPLOAD_HANDLERS = [
     # "django.core.files.uploadhandler.TemporaryFileUploadHandler",
 ]
 
-MEDIA_ROOT = BASE_DIR.parent / 'media/'
-MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR.parent / "media/"
+MEDIA_URL = "/media/"
 
 HEALTH_CHECK = {
-    'DISK_USAGE_MAX': 90,
-    'MEMORY_MIN': 100,
+    "DISK_USAGE_MAX": 90,
+    "MEMORY_MIN": 100,
 }
 
 ASGI_APPLICATION = "server.asgi.application"
 CHANNEL_LAYERS = {
-    'default': {
-        'BACKEND': 'channels_redis.core.RedisChannelLayer',
-        'CONFIG': {
-            "hosts": [('redis', 6379)],
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [("redis", 6379)],
         },
     },
 }
 
 TEMPLATES = [
     {
-        'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
-        'APP_DIRS': True,
-        'OPTIONS': {
-            'context_processors': [
-                'django.template.context_processors.debug',
-                'django.template.context_processors.request',
-                'django.contrib.auth.context_processors.auth',
-                'django.contrib.messages.context_processors.messages',
+        "BACKEND": "django.template.backends.django.DjangoTemplates",
+        "DIRS": [],
+        "APP_DIRS": True,
+        "OPTIONS": {
+            "context_processors": [
+                "django.template.context_processors.debug",
+                "django.template.context_processors.request",
+                "django.contrib.auth.context_processors.auth",
+                "django.contrib.messages.context_processors.messages",
             ],
         },
     },
 ]
 
-WSGI_APPLICATION = 'server.wsgi.application'
+WSGI_APPLICATION = "server.wsgi.application"
 
-AUTH_USER_MODEL = 'auth.User'
+AUTH_USER_MODEL = "auth.User"
 
 # Database
 # https://docs.djangoproject.com/en/3.1/ref/settings/#databases
 
 DATABASES = {
-    'default': {
+    "default": {
         "ENGINE": os.environ.get("DATABASE_ENGINE", "django.db.backends.sqlite3"),
-        "NAME": os.environ.get("DATABASE_DATABASE", os.path.join(BASE_DIR, "db.sqlite3")),
+        "NAME": os.environ.get(
+            "DATABASE_DATABASE", os.path.join(BASE_DIR, "db.sqlite3")
+        ),
         "USER": os.environ.get("DATABASE_USER", "user"),
         "PASSWORD": os.environ.get("DATABASE_PASSWORD", "password"),
         "HOST": os.environ.get("DATABASE_HOST", "localhost"),
         "PORT": os.environ.get("DATABASE_PORT", "5432"),
-
     }
 }
 
@@ -181,25 +192,25 @@ DATABASES = {
 
 AUTH_PASSWORD_VALIDATORS = [
     {
-        'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
+        "NAME": "django.contrib.auth.password_validation.UserAttributeSimilarityValidator",
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.MinimumLengthValidator',
+        "NAME": "django.contrib.auth.password_validation.MinimumLengthValidator",
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.CommonPasswordValidator',
+        "NAME": "django.contrib.auth.password_validation.CommonPasswordValidator",
     },
     {
-        'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
+        "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",
     },
 ]
 
 # Internationalization
 # https://docs.djangoproject.com/en/3.1/topics/i18n/
 
-LANGUAGE_CODE = 'en-us'
+LANGUAGE_CODE = "en-us"
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = "UTC"
 
 USE_I18N = True
 
@@ -211,14 +222,14 @@ USE_TZ = True
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/3.1/howto/static-files/
 
-STATIC_URL = '/static/'
+STATIC_URL = "/static/"
 
-EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
 EMAIL_HOST = os.environ.get("EMAIL_HOST")
-EMAIL_USER = os.environ.get("EMAIL_USER")
-EMAIL_PASSWORD = os.environ.get("EMAIL_PASSWORD")
 EMAIL_PORT = os.environ.get("EMAIL_PORT")
-EMAIL_TLS = int(os.environ.get("EMAIL_TLS"))
+EMAIL_USE_TLS = bool(os.environ.get("EMAIL_USE_TLS"))
+EMAIL_HOST_USER = os.environ.get("EMAIL_USER")
+EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_PASSWORD")
 
 
 # DEFAULT_FILE_STORAGE = 'storages.backends.gcloud.GoogleCloudStorage'
@@ -228,9 +239,11 @@ EMAIL_TLS = int(os.environ.get("EMAIL_TLS"))
 # GS_SECRET_ACCESS_KEY = os.environ.get("GS_SECRET_ACCESS_KEY")
 # GS_BUCKET_NAME = os.environ.get("GS_BUCKET_NAME")
 
+LOGIN_URL = "rest_framework:login"
+LOGOUT_URL = "rest_framework:logout"
 
 SWAGGER_SETTINGS = {
-    'USE_SESSION_AUTH': True,
-    'LOGIN_URL': '/admin/login/',
-    'LOGOUT_URL': '/admin/logout/',
+    "USE_SESSION_AUTH": True,
+    # 'LOGIN_URL': '/admin/login/',
+    # 'LOGOUT_URL': '/admin/logout/',
 }

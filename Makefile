@@ -45,14 +45,14 @@ images: ## Show all images
 	docker-compose -f $(or $(DOCKER_COMPOSE_FILE), docker-compose.yml) images
 
 exec: ## Exec container
-	docker-compose -f $(or $(DOCKER_COMPOSE_FILE), docker-compose.yml) exec $(or $(c), web) poetry install
-	docker-compose -f $(or $(DOCKER_COMPOSE_FILE), docker-compose.yml) exec $(or $(c), web) bash
+	docker-compose -f $(or $(DOCKER_COMPOSE_FILE), docker-compose.yml) exec $(or $(c), api) poetry install
+	docker-compose -f $(or $(DOCKER_COMPOSE_FILE), docker-compose.yml) exec $(or $(c), api) bash
 
 shell: ## Exec shell
-	docker-compose -f $(or $(DOCKER_COMPOSE_FILE), docker-compose.yml) exec $(or $(c), web) python src/manage.py shell_plus
+	docker-compose -f $(or $(DOCKER_COMPOSE_FILE), docker-compose.yml) exec $(or $(c), api) python src/manage.py shell_plus
 
 run-command: ## Run command in shell
-	docker-compose -f $(or $(DOCKER_COMPOSE_FILE), docker-compose.yml) exec $(or $(c), web) python -c="$(e)"
+	docker-compose -f $(or $(DOCKER_COMPOSE_FILE), docker-compose.yml) exec $(or $(c), api) python -c="$(e)"
 
 manage:
-	docker-compose -f $(or $(DOCKER_COMPOSE_FILE), docker-compose.yml) exec $(or $(c), web) python src/manage.py $(e)
+	docker-compose -f $(or $(DOCKER_COMPOSE_FILE), docker-compose.yml) exec $(or $(c), api) python src/manage.py $(e)
