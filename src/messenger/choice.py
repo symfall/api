@@ -2,7 +2,6 @@ from rest_framework.fields import ChoiceField, to_choices_dict, flatten_choices_
 
 
 class ChoiceField(ChoiceField):
-
     def _get_choices(self):
         return self._choices
 
