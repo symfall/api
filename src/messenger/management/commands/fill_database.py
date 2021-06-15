@@ -1,7 +1,5 @@
-import uuid
-
 import io
-from random import choice
+from random import choice, randrange
 
 from django.core import files
 from faker import Faker
@@ -13,44 +11,55 @@ from messenger.models import File, Message, Chat, User
 
 class Command(BaseCommand):
 
-    help = 'Add new student(s) to the system'
+    help = "Add new student(s) to the system"
 
     def add_arguments(self, parser):
-        parser.add_argument('-l', '--len', type=int, default=10)
+        parser.add_argument("-l", "--len", type=int, default=10)
 
     def handle(self, *args, **options):
-        faker = Faker()
+        faker = Faker("en_US")
 
-        self.stdout.write('Start filling data')
+        self.stdout.write("Start filling data")
 
         users = []
-        for _ in range(options['len']):
-            user = User()
-            user.username = faker.profile()['username']
+        for index in range(options["len"]):
+            self.stdout.write(f"Process {index} line of User")
+
+            user, _ = User.objects.get_or_create(username=faker.profile()["username"])
             user.first_name = faker.first_name()
             user.last_name = faker.last_name()
             user.email = faker.email()
             user.save()
             users.append(user)
 
-        for _ in range(options['len']):
+        for index in range(options["len"]):
+            self.stdout.write(f"Process {index} line of Chat -> Message ->? File")
+
             chat = Chat()
             chat.title = faker.sentence()[0:40]
             chat.creator = choice(users)
             chat.save()
 
-            for _ in range(100):
+            for _ in range(randrange(10000)):
                 message = Message()
                 message.sender = choice(users)
                 message.chat = chat
                 message.message = faker.text()
                 message.save()
 
-                if faker.pybool():
+                if choice([True, False]):
                     image_file = io.BytesIO()
-                    image = Image.new('RGBA', size=(100, 100), color=(155, 0, 0))
-                    image.save(image_file, 'png')
-                    image_file.name = 'test.png'
+                    image = Image.new(
+                        "RGBA",
+                        size=(100, 100),
+                        color=(
+                            randrange(255),
+                            randrange(255),
+                            randrange(255),
+                        )
+                    )
+                    image.save(image_file, "png")
+                    image_file.name = "test.png"
                     image_file.seek(0)
 
                     file = File()
@@ -58,4 +67,4 @@ class Command(BaseCommand):
                     file.message = message
                     file.save()
 
-        self.stdout.write('End filling data')
+        self.stdout.write("End filling data")
