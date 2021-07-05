@@ -4,14 +4,9 @@ from rest_framework.parsers import MultiPartParser
 
 from messenger.models import Chat, File, Message
 from messenger.permissions import IsAuthenticatedOrPostAllowAny
-from messenger.serializers import (
-    ChatSerializer,
-    ChatViewSerializer,
-    FileSerializer,
-    MessageSerializer,
-    MessageViewSerializer,
-    UserSerializer,
-)
+from messenger.serializers import (ChatSerializer, ChatViewSerializer,
+                                   FileSerializer, MessageSerializer,
+                                   MessageViewSerializer, UserSerializer)
 
 
 class UserViewSet(viewsets.ModelViewSet):

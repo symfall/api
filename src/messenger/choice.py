@@ -1,4 +1,5 @@
-from rest_framework.fields import ChoiceField, to_choices_dict, flatten_choices_dict
+from rest_framework.fields import (ChoiceField, flatten_choices_dict,
+                                   to_choices_dict)
 
 
 class ChoiceField(ChoiceField):

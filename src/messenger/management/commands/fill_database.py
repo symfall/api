@@ -2,11 +2,11 @@ import io
 from random import choice, randrange
 
 from django.core import files
+from django.core.management.base import BaseCommand
 from faker import Faker
 from PIL import Image
-from django.core.management.base import BaseCommand
 
-from messenger.models import File, Message, Chat, User
+from messenger.models import Chat, File, Message, User
 
 
 class Command(BaseCommand):
