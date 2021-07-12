@@ -1,8 +1,8 @@
 from django.contrib.auth import get_user_model
 from django.db import models
-from django.contrib.auth.models import AbstractUser
-from .mixins import TimestampMixin, UUIDModel
+
 from .choices import STATUS
+from .mixins import TimestampMixin, UUIDModel
 
 User = get_user_model()
 

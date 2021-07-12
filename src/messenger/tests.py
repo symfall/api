@@ -1,10 +1,11 @@
 import json
-from unittest import mock
+from unittest import skip
 
 from django.urls import reverse
 from freezegun import freeze_time
 from rest_framework.test import APITestCase
-from .models import User, Chat, Message, File
+
+from .models import Chat, File, Message, User
 
 
 class GetChatViewTest(APITestCase):
@@ -150,6 +151,7 @@ class GetUserViewTest(APITestCase):
         )
 
 
+@skip('Moved to SING_UP')
 class AddUserViewTest(APITestCase):
     def setUp(self) -> None:
         self.user = {
