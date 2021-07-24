@@ -6,28 +6,20 @@ services:
       image: postgres:13
       environment:
         - POSTGRES_DB=postgres
-        - POSTGRES_USER=postgres
-        - POSTGRES_PASSWORD=mailo1998
-      ports:
-        - "127.0.0.1:5432:5432"
+        - POSTGRES_PASSWORD=postgres
 
     redis:
       image: redis:6
-      ports:
-        - "127.0.0.1:6379:6379"
 
     api:
       build: ..
       volumes:
         - ../:/code
-      ports:
-        - "127.0.0.1:8000:8000"
+      working_dir: /code/src
       depends_on:
         - db
         - redis
-      entrypoint: /code/test_entrypoint.sh
       environment:
         - SECRET_KEY=${SECRET_KEY}
         - DJANGO_ALLOWED_HOSTS=${DJANGO_ALLOWED_HOSTS}
         - DEBUG=${DEBUG}
-        - SENTRY_DSN=${SENTRY_DSN}

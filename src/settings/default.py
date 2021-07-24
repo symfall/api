@@ -12,14 +12,18 @@ https://docs.djangoproject.com/en/3.1/ref/settings/
 
 import logging
 import os
+from distutils.util import strtobool
 from pathlib import Path
 
 import sentry_sdk
 from sentry_sdk.integrations.django import DjangoIntegration
 
 sentry_sdk.init(
-    dsn=os.environ.get("SENTRY_DSN"),
+    dsn=os.getenv("SENTRY_DSN"),
     integrations=[DjangoIntegration()],
+    # Set traces_sample_rate to 1.0 to capture 100%
+    # of transactions for performance monitoring.
+    # We recommend adjusting this value in production.
     traces_sample_rate=1.0,
     # If you wish to associate users to errors (assuming you are using
     # django.contrib.auth) you may enable sending PII data.
@@ -57,50 +61,49 @@ LOGGING = {
             "level": logging.DEBUG,
             "propagate": False,
         },
+        "faker": {
+            "handlers": ["console"],
+            "level": logging.INFO,
+        },
     },
 }
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/3.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ.get("SECRET_KEY")
+SECRET_KEY = os.getenv("SECRET_KEY")
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = int(os.environ.get("DEBUG", default=0))
+DEBUG = strtobool(os.getenv("DEBUG", "False"))
 
-ALLOWED_HOSTS = os.environ.get("DJANGO_ALLOWED_HOSTS", "").split(" ")
+ALLOWED_HOSTS = os.getenv("DJANGO_ALLOWED_HOSTS", "").split(",")
 
 
 # Application definition
 
 INSTALLED_APPS = [
-    'django.contrib.admin',
-    'django.contrib.auth',
-    'django.contrib.contenttypes',
-    'django.contrib.sessions',
-    'django.contrib.messages',
-    'django.contrib.staticfiles',
-
+    "django.contrib.admin",
+    "django.contrib.auth",
+    "django.contrib.contenttypes",
+    "django.contrib.sessions",
+    "django.contrib.messages",
+    "django.contrib.staticfiles",
     # 'corsheaders',
-
-    'health_check',
-    'health_check.db',
-    'health_check.cache',
-    'health_check.contrib.psutil',
-    'health_check.contrib.migrations',
-
-    'django_extensions',
-
-    'rest_framework',
-    'drf_yasg',
-
-    'messenger',
+    "health_check",
+    "health_check.db",
+    "health_check.cache",
+    "health_check.contrib.psutil",
+    "health_check.contrib.migrations",
+    "django_extensions",
+    "rest_framework",
+    "drf_yasg",
+    "messenger",
+    "authentication",
 ]
 
 MIDDLEWARE = [
     # 'corsheaders.middleware.CorsMiddleware',
     # 'django.middleware.common.CommonMiddleware',
-
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
@@ -123,7 +126,7 @@ REST_FRAMEWORK = {
     "DEFAULT_SCHEMA_CLASS": "rest_framework.schemas.coreapi.AutoSchema",
     "DEFAULT_AUTHENTICATION_CLASSES": (
         "rest_framework.authentication.SessionAuthentication",
-        # "rest_framework.authentication.TokenAuthentication",
+        "rest_framework.authentication.TokenAuthentication",
     ),
     "PAGE_SIZE": 10,
 }
@@ -176,14 +179,12 @@ AUTH_USER_MODEL = "auth.User"
 
 DATABASES = {
     "default": {
-        "ENGINE": os.environ.get("DATABASE_ENGINE", "django.db.backends.sqlite3"),
-        "NAME": os.environ.get(
-            "DATABASE_DATABASE", os.path.join(BASE_DIR, "db.sqlite3")
-        ),
-        "USER": os.environ.get("DATABASE_USER", "user"),
-        "PASSWORD": os.environ.get("DATABASE_PASSWORD", "password"),
-        "HOST": os.environ.get("DATABASE_HOST", "localhost"),
-        "PORT": os.environ.get("DATABASE_PORT", "5432"),
+        "ENGINE": os.getenv("DATABASE_ENGINE", "django.db.backends.postgresql"),
+        "NAME": os.getenv("DATABASE_NAME", "postgres"),
+        "USER": os.getenv("DATABASE_USER", "postgres"),
+        "PASSWORD": os.getenv("DATABASE_PASSWORD", "postgres"),
+        "HOST": os.getenv("DATABASE_HOST", "db"),
+        "PORT": os.getenv("DATABASE_PORT", "5432"),
     }
 }
 
@@ -226,19 +227,11 @@ USE_TZ = True
 STATIC_URL = "/static/"
 
 EMAIL_BACKEND = "django.core.mail.backends.smtp.EmailBackend"
-EMAIL_HOST = os.environ.get("EMAIL_HOST")
-EMAIL_PORT = os.environ.get("EMAIL_PORT")
-EMAIL_USE_TLS = bool(os.environ.get("EMAIL_USE_TLS"))
-EMAIL_HOST_USER = os.environ.get("EMAIL_USER")
-EMAIL_HOST_PASSWORD = os.environ.get("EMAIL_PASSWORD")
-
-
-# DEFAULT_FILE_STORAGE = 'storages.backends.gcloud.GoogleCloudStorage'
-# STATICFILES_STORAGE = 'storages.backends.gcloud.GoogleCloudStorage'
-#
-# GS_ACCESS_KEY_ID = os.environ.get("GS_ACCESS_KEY_ID")
-# GS_SECRET_ACCESS_KEY = os.environ.get("GS_SECRET_ACCESS_KEY")
-# GS_BUCKET_NAME = os.environ.get("GS_BUCKET_NAME")
+EMAIL_HOST = os.getenv("EMAIL_HOST", "smtp.gmail.com")
+EMAIL_PORT = int(os.getenv("EMAIL_PORT", 587))
+EMAIL_USE_TLS = strtobool(os.getenv("EMAIL_USE_TLS", "True"))
+EMAIL_HOST_USER = os.getenv("EMAIL_USER", "wrong-email@mail.com")
+EMAIL_HOST_PASSWORD = os.getenv("EMAIL_PASSWORD", "wrong-email-password")
 
 LOGIN_URL = "rest_framework:login"
 LOGOUT_URL = "rest_framework:logout"
@@ -248,3 +241,6 @@ SWAGGER_SETTINGS = {
     # 'LOGIN_URL': '/admin/login/',
     # 'LOGOUT_URL': '/admin/logout/',
 }
+
+
+FRONT_URL = os.getenv("FRONT_URL", "http://localhost:8000/activate")

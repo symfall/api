@@ -1,11 +1,13 @@
 import json
-from unittest import skip
 
+from django.contrib.auth import get_user_model
 from django.urls import reverse
 from freezegun import freeze_time
 from rest_framework.test import APITestCase
 
-from .models import Chat, File, Message, User
+from messenger.models import Chat, File, Message
+
+User = get_user_model()
 
 
 class GetChatViewTest(APITestCase):
@@ -119,96 +121,6 @@ class EditChatViewTest(APITestCase):
         self.assertEqual(response.status_code, 200)
 
 
-class GetUserViewTest(APITestCase):
-    def setUp(self) -> None:
-        self.user = User.objects.create_user(
-            username="test_user",
-            password="1234567",
-            email="test_user@gmail.com",
-        )
-
-    @freeze_time("1991-02-20 00:00:00")
-    def test_get_user(self):
-        self.client.login(username="test_user", password="1234567")
-        response = self.client.get(reverse("api:user-list"), data={"format": "json"})
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(
-            {
-                "count": 1,
-                "next": None,
-                "previous": None,
-                "results": [
-                    {
-                        "username": "test_user",
-                        "email": "test_user@gmail.com",
-                        "last_login": "1991-02-20T00:00:00Z",
-                        "first_name": "",
-                        "last_name": "",
-                    }
-                ],
-            },
-            response.json(),
-        )
-
-
-@skip('Moved to SING_UP')
-class AddUserViewTest(APITestCase):
-    def setUp(self) -> None:
-        self.user = {
-            "username": "test_add_user",
-            "password": "1234567",
-            "email": "test_add_user@gmail.com",
-        }
-
-    def test_add_user(self):
-        response = self.client.post(
-            reverse("api:user-list"),
-            data=json.dumps(self.user),
-            content_type="application/json",
-        )
-        self.assertEqual(response.status_code, 201)
-
-
-class DeleteUserViewTest(APITestCase):
-    def setUp(self) -> None:
-        self.user = User.objects.create_user(
-            username="test_delete_user",
-            password="1234567",
-            email="test_delete_user@gmail.com",
-        )
-
-    def test_delete_user(self):
-        self.client.login(username="test_delete_user", password="1234567")
-        response = self.client.delete(
-            reverse("api:user-detail", kwargs={"pk": self.user.pk})
-        )
-        self.assertEqual(response.status_code, 204)
-
-
-class EditUserViewTest(APITestCase):
-    def setUp(self) -> None:
-        self.user = User.objects.create_user(
-            username="test_edit_user",
-            password="1234567",
-            email="test_edit_user@gmail.com",
-        )
-
-        self.edit_user = {
-            "username": "test_user_edit",
-            "password": "3214532",
-            "email": "test_user_edit@gmail.com",
-        }
-
-    def test_edit_user(self):
-        self.client.login(username="test_edit_user", password="1234567")
-        response = self.client.put(
-            reverse("api:user-detail", kwargs={"pk": self.user.pk}),
-            json.dumps(self.edit_user),
-            content_type="application/json",
-        )
-        self.assertEqual(response.status_code, 200)
-
-
 # -> Message tests
 class GetMessageViewTest(APITestCase):
     @freeze_time("1991-02-20 00:00:00")
@@ -226,7 +138,6 @@ class GetMessageViewTest(APITestCase):
 
     @freeze_time("1991-02-20 00:00:00")
     def test_get_message(self):
-        self.maxDiff = None
         self.client.login(username="test_sender", password="1234567")
         response = self.client.get(reverse("api:message-list"), data={"format": "json"})
         self.assertEqual(response.status_code, 200)
@@ -345,7 +256,9 @@ class EditMessageViewTest(APITestCase):
     def test_edit_message(self):
         self.client.login(username="test_edit_sender", password="1234567")
         response = self.client.put(
-            reverse("api:message-detail", kwargs={"pk": str(self.test_edit_message.pk)}),
+            reverse(
+                "api:message-detail", kwargs={"pk": str(self.test_edit_message.pk)}
+            ),
             data=json.dumps(self.edit_message),
             content_type="application/json",
         )
@@ -382,7 +295,9 @@ class GetFileViewTest(APITestCase):
                 "count": 1,
                 "next": None,
                 "previous": None,
-                "results": [{"document": None, "message": str(Message.objects.first().id)}],
+                "results": [
+                    {"document": None, "message": str(Message.objects.first().id)}
+                ],
             },
             response.json(),
         )

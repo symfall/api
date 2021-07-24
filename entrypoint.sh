@@ -1,7 +1,12 @@
 #!/bin/sh
 
+if [ $ENVIROMENT = "local" ]; then
+# Install dev requirements
+poetry export --without-hashes --dev | poetry run pip install -r /dev/stdin
+fi
+
 # Run migrations
-python /code/src/manage.py migrate
+python $PWD/manage.py migrate
 
 # Run server
-python /code/src/manage.py runserver 0.0.0.0:8000
+python $PWD/manage.py runserver 0.0.0.0:8000

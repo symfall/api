@@ -6,12 +6,12 @@ from django.db import migrations
 class Migration(migrations.Migration):
 
     dependencies = [
-        ('messenger', '0001_initial'),
+        ("messenger", "0001_initial"),
     ]
 
     operations = [
         migrations.AlterModelOptions(
-            name='file',
-            options={'ordering': ('document',)},
+            name="file",
+            options={"ordering": ("document",)},
         ),
     ]

@@ -10,7 +10,7 @@ up: ## Start all or c=<name> containers in foreground
 	docker-compose -f $(or $(DOCKER_COMPOSE_FILE), composes/local.yml) up $(c)
 
 start: ## Start all or c=<name> containers in background
-	docker-compose -f $(or $(DOCKER_COMPOSE_FILE), local.yml) up -d $(c)
+	docker-compose -f $(or $(DOCKER_COMPOSE_FILE), composes/local.yml) up -d $(c)
 
 build: ## Build all or c=<name> containers in background
 	docker-compose -f $(or $(DOCKER_COMPOSE_FILE), composes/local.yml) up --build -d $(c)
@@ -25,8 +25,7 @@ restart: ## Restart all or c=<name> containers
 	docker-compose -f $(or $(DOCKER_COMPOSE_FILE), composes/local.yml) restart $(c)
 
 rebuild: ## Rebuild all or c=<name> containers
-	docker-compose -f $(or $(DOCKER_COMPOSE_FILE), composes/local.yml) down
-	docker-compose -f $(or $(DOCKER_COMPOSE_FILE), composes/local.yml) up --build -d
+	docker-compose -f $(or $(DOCKER_COMPOSE_FILE), composes/local.yml) bash -c "down && up --build -d"
 
 logs: ## Show logs for all or c=<name> containers
 	docker-compose -f $(or $(DOCKER_COMPOSE_FILE), composes/local.yml) logs --tail=$(or $(n), 100) -f $(c)
@@ -45,14 +44,23 @@ images: ## Show all images
 	docker-compose -f $(or $(DOCKER_COMPOSE_FILE), composes/local.yml) images
 
 exec: ## Exec container
-	docker-compose -f $(or $(DOCKER_COMPOSE_FILE), composes/local.yml) exec $(or $(c), api) poetry install
 	docker-compose -f $(or $(DOCKER_COMPOSE_FILE), composes/local.yml) exec $(or $(c), api) bash
 
+health-check: ## Get health-check info
+	docker-compose -f $(or $(DOCKER_COMPOSE_FILE), composes/local.yml) exec $(or $(c), api) python manage.py health_check
+
 shell: ## Exec shell
-	docker-compose -f $(or $(DOCKER_COMPOSE_FILE), composes/local.yml) exec $(or $(c), api) python src/manage.py shell_plus
+	docker-compose -f $(or $(DOCKER_COMPOSE_FILE), composes/local.yml) exec $(or $(c), api) python manage.py shell_plus
 
-run-command: ## Run command in shell
-	docker-compose -f $(or $(DOCKER_COMPOSE_FILE), composes/local.yml) exec $(or $(c), api) python -c="$(e)"
+test: ## Run tests
+	docker-compose -f $(or $(DOCKER_COMPOSE_FILE), composes/local.yml) exec $(or $(c), api) pytest $(or $(e), .)
 
-manage:
-	docker-compose -f $(or $(DOCKER_COMPOSE_FILE), composes/local.yml) exec $(or $(c), api) python src/manage.py $(e)
+perform: ## Perform code by black, isort and autoflake
+	docker-compose -f $(or $(DOCKER_COMPOSE_FILE), composes/local.yml) exec $(or $(c), api) black $(or $(e), .)
+	docker-compose -f $(or $(DOCKER_COMPOSE_FILE), composes/local.yml) exec $(or $(c), api) isort $(or $(e), .)
+	docker-compose -f $(or $(DOCKER_COMPOSE_FILE), composes/local.yml) exec $(or $(c), api) autoflake --in-place --remove-all-unused-imports --recursive $(or $(e), .)
+
+lint: ## Check code by pylint
+	docker-compose -f $(or $(DOCKER_COMPOSE_FILE), composes/local.yml) exec $(or $(c), api) pylint .
+
+quality: perform lint test health-check

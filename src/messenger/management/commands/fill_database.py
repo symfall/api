@@ -29,11 +29,12 @@ class Command(BaseCommand):
             user.first_name = faker.first_name()
             user.last_name = faker.last_name()
             user.email = faker.email()
+            user.set_password("1234")
             user.save()
             users.append(user)
 
         for index in range(options["len"]):
-            self.stdout.write(f"Process {index} line of Chat -> Message ->? File")
+            self.stdout.write(f"Process {index} line of Chat -> Message 10000 ->? File")
 
             chat = Chat()
             chat.title = faker.sentence()[0:40]
@@ -56,7 +57,7 @@ class Command(BaseCommand):
                             randrange(255),
                             randrange(255),
                             randrange(255),
-                        )
+                        ),
                     )
                     image.save(image_file, "png")
                     image_file.name = "test.png"
