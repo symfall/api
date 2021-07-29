@@ -1,8 +1,7 @@
-from rest_framework.fields import (ChoiceField, flatten_choices_dict,
-                                   to_choices_dict)
+from rest_framework.fields import ChoiceField, flatten_choices_dict, to_choices_dict
 
 
-class ChoiceField(ChoiceField):
+class ChoiceField(ChoiceField):  # noqa:function-redefined
     def _get_choices(self):
         return self._choices
 

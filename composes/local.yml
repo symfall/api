@@ -5,9 +5,7 @@ services:
     db:
       image: postgres:13
       environment:
-        - POSTGRES_DB=postgres
-        - POSTGRES_USER=postgres
-        - POSTGRES_PASSWORD=mailo1998
+        - POSTGRES_PASSWORD=postgres
       ports:
         - "127.0.0.1:5432:5432"
 
@@ -19,6 +17,7 @@ services:
     api:
       build: ..
       entrypoint: /code/entrypoint.sh
+      working_dir: /code/src
       volumes:
         - ../:/code
       ports:

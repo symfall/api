@@ -1,10 +1,13 @@
-FROM python:3.8.9
+FROM python:3.9.6
 ENV PYTHONUNBUFFERED 1
 
-WORKDIR /code
-COPY . .
+RUN useradd -m user
+USER user
+WORKDIR /home/user
 
-RUN pip install -U pip && \
-    pip install poetry && \
+ENV PATH=/home/user/.local/bin:${PATH}
+COPY --chown=user:user . .
+
+RUN pip install --upgrade pip && pip install --user poetry && \
     poetry config virtualenvs.create false && \
-    poetry install --no-dev
+    poetry export --without-hashes | poetry run pip install -r /dev/stdin

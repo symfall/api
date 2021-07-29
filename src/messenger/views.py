@@ -4,16 +4,22 @@ from rest_framework.parsers import MultiPartParser
 
 from messenger.models import Chat, File, Message
 from messenger.permissions import IsAuthenticatedOrPostAllowAny
-from messenger.serializers import (ChatSerializer, ChatViewSerializer,
-                                   FileSerializer, MessageSerializer,
-                                   MessageViewSerializer, UserSerializer)
+from messenger.serializers import (
+    ChatSerializer,
+    ChatViewSerializer,
+    FileSerializer,
+    MessageSerializer,
+    MessageViewSerializer,
+    UserSerializer,
+)
 
 
 class UserViewSet(viewsets.ModelViewSet):
     """
     API endpoint that allows users to be viewed or edited.
     """
-    http_method_names = ('get', 'put', 'delete', 'patch')
+
+    http_method_names = ("get", "put", "delete", "patch")
     queryset = get_user_model().objects.order_by("-date_joined")
     serializer_class = UserSerializer
     permission_classes = (IsAuthenticatedOrPostAllowAny,)
@@ -30,8 +36,7 @@ class ChatViewSet(viewsets.ModelViewSet):
     def get_serializer_class(self):
         if self.request.method == "GET":
             return ChatViewSerializer
-        else:
-            return ChatSerializer
+        return ChatSerializer
 
 
 class MessageViewSet(viewsets.ModelViewSet):
@@ -45,8 +50,7 @@ class MessageViewSet(viewsets.ModelViewSet):
     def get_serializer_class(self):
         if self.request.method == "GET":
             return MessageViewSerializer
-        else:
-            return MessageSerializer
+        return MessageSerializer
 
 
 class FileViewSet(viewsets.ModelViewSet):

@@ -38,4 +38,4 @@ class File(UUIDModel, TimestampMixin, models.Model):
     message = models.ForeignKey(Message, on_delete=models.CASCADE)
 
     class Meta:
-        ordering = ('document',)
+        ordering = ("document",)

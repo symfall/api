@@ -1,10 +1,24 @@
+from django.contrib.auth import get_user_model
 from rest_framework import serializers
 
-from authentication.serializers import UserSerializer
 from messenger.choice import ChoiceField
 
 from .choices import STATUS
 from .models import Chat, File, Message
+
+User = get_user_model()
+
+
+class UserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = (
+            "username",
+            "email",
+            "last_login",
+            "first_name",
+            "last_name",
+        )
 
 
 class ChatSerializer(serializers.ModelSerializer):
