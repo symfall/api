@@ -70,7 +70,8 @@ class AuthViewSet(viewsets.GenericViewSet):
         methods=("GET",),
         detail=False,
         permission_classes=(permissions.IsAuthenticated,),
-        serializer_class=EmptySerializer,
+        serializer_class=EmptySerializer,  # pylint: disable=no-self-use
+        pagination_class=None,
     )
     def logout(self, request):
         """
@@ -137,7 +138,11 @@ class AuthViewSet(viewsets.GenericViewSet):
 
         user_id = urlsafe_base64_encode(force_bytes(user.pk))
 
-        activate_url = f"{settings.FRONT_URL}/{user_id}/{default_token_generator.make_token(user=user)}"
+        activate_url = (
+            f"{settings.FRONT_URL}/"
+            f"{user_id}/"
+            f"{default_token_generator.make_token(user=user)}"
+        )
         send_email(
             recipient_list=[user.email],
             activate_url=activate_url,
@@ -155,7 +160,8 @@ class AuthViewSet(viewsets.GenericViewSet):
         detail=False,
         permission_classes=(permissions.AllowAny,),
         serializer_class=UserRegisterSerializer,
-        url_path=r"activation/(?P<user_id_b64>[\d\w-]+)/(?P<token>[\d\w-]+)",
+        url_path=r"activation/(?P<user_id_b64>[\d\w-]+)/(?P<token>[\d\w-]+)",  # pylint: disable=no-self-use
+        pagination_class=None,
     )
     def activation(self, request, user_id_b64, token):
         try:

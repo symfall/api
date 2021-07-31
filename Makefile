@@ -55,12 +55,19 @@ shell: ## Exec shell
 test: ## Run tests
 	docker-compose -f $(or $(DOCKER_COMPOSE_FILE), composes/local.yml) exec $(or $(c), api) pytest $(or $(e), .)
 
+cov:
+	docker-compose -f $(or $(DOCKER_COMPOSE_FILE), composes/local.yml) exec $(or $(c), api) pytest --cov=. --cov-config=../.coveragerc --no-cov-on-fail --cov-fail-under=90 $(or $(e), .)
+
+coverage: ## Run tests
+	docker-compose -f $(or $(DOCKER_COMPOSE_FILE), composes/local.yml) exec $(or $(c), api) coverage run --rcfile=../.coveragerc -m pytest $(or $(e), .)
+	docker-compose -f $(or $(DOCKER_COMPOSE_FILE), composes/local.yml) exec $(or $(c), api) coverage report --fail-under=90 -m
+
 perform: ## Perform code by black, isort and autoflake
 	docker-compose -f $(or $(DOCKER_COMPOSE_FILE), composes/local.yml) exec $(or $(c), api) black $(or $(e), .)
 	docker-compose -f $(or $(DOCKER_COMPOSE_FILE), composes/local.yml) exec $(or $(c), api) isort $(or $(e), .)
 	docker-compose -f $(or $(DOCKER_COMPOSE_FILE), composes/local.yml) exec $(or $(c), api) autoflake --in-place --remove-all-unused-imports --recursive $(or $(e), .)
 
 lint: ## Check code by pylint
-	docker-compose -f $(or $(DOCKER_COMPOSE_FILE), composes/local.yml) exec $(or $(c), api) pylint .
+	docker-compose -f $(or $(DOCKER_COMPOSE_FILE), composes/local.yml) exec $(or $(c), api) pylint --load-plugins pylint_django --django-settings-module=settings.default $(or $(e), ../src)
 
 quality: perform lint test health-check

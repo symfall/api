@@ -1,12 +1,26 @@
 #!/bin/sh
 
-if [ $ENVIROMENT = "local" ]; then
-# Install dev requirements
-poetry export --without-hashes --dev | poetry run pip install -r /dev/stdin
+if [ "$ENVIROMENT" = "local" ] || [ "$ENVIROMENT" = "test" ]; then
+
+  # Install dev requirements
+  poetry export --without-hashes --dev | poetry run pip install -r /dev/stdin
+
 fi
 
-# Run migrations
-python $PWD/manage.py migrate
+if [ "$ENVIROMENT" = "test" ]; then
 
-# Run server
-python $PWD/manage.py runserver 0.0.0.0:8000
+  coverage -m
+
+fi
+
+
+if [ "$ENVIROMENT" = "local" ]; then
+
+  # Run migrations
+  python "$PWD"/manage.py migrate
+
+  # Run server
+  python "$PWD"/manage.py runserver 0.0.0.0:8000
+
+fi
+

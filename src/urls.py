@@ -1,7 +1,6 @@
-"""symfall URL Configuration
+"""Symfall URL Configuration
 
-The `urlpatterns` list routes URLs to views. For more information please see:
-    https://docs.djangoproject.com/en/3.1/topics/http/urls/
+The `urlpatterns` list routes URLs to views.
 Examples:
 Function views
     1. Add an import:  from my_app import views
@@ -24,7 +23,7 @@ from rest_framework import permissions, routers
 from authentication import views as authentication_views
 from messenger import views as messenger_views
 
-schema_view = get_schema_view(
+SchemaView = get_schema_view(
     openapi.Info(
         title="Symfall API",
         default_version="v1",
@@ -38,35 +37,54 @@ schema_view = get_schema_view(
 )
 
 router = routers.DefaultRouter()
-router.register(r"auth", authentication_views.AuthViewSet, basename="auth")
+router.register(
+    r"auth",
+    authentication_views.AuthViewSet,
+    basename="auth",
+)
 
 router.register(r"users", messenger_views.UserViewSet, basename="user")
 router.register(r"chat", messenger_views.ChatViewSet, basename="chat")
-router.register(r"message", messenger_views.MessageViewSet, basename="message")
+router.register(
+    r"message",
+    messenger_views.MessageViewSet,
+    basename="message",
+)
 router.register(r"file", messenger_views.FileViewSet, basename="file")
 
 
 def trigger_error(request):
-    return 1 / 0
+    """
+    Sentry Test function with ZeroDivisionError
+    """
+    return request, 1 / 0
 
 
 urlpatterns = [
     path("sentry-debug/", trigger_error),
     path("admin/", admin.site.urls),
-    path("api-auth/", include("rest_framework.urls", namespace="rest_framework")),
+    path(
+        "api-auth/",
+        include(
+            "rest_framework.urls",
+            namespace="rest_framework",
+        ),
+    ),
     re_path(r"^health_check", include("health_check.urls")),
     re_path(
         r"^swagger(?P<format>\.json|\.yaml)$",
-        schema_view.without_ui(cache_timeout=0),
+        SchemaView.without_ui(cache_timeout=0),
         name="schema-json",
     ),
     re_path(
         r"^swagger/$",
-        schema_view.with_ui("swagger", cache_timeout=0),
+        SchemaView.with_ui("swagger", cache_timeout=0),
         name="schema-swagger-ui",
     ),
     re_path(
-        r"^redoc/$", schema_view.with_ui("redoc", cache_timeout=0), name="schema-redoc"
+        r"^redoc/$",
+        SchemaView.with_ui("redoc", cache_timeout=0),
+        name="schema-redoc",
     ),
     re_path("^api/", include((router.urls, "api"))),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

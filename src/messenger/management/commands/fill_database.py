@@ -25,7 +25,9 @@ class Command(BaseCommand):
         for index in range(options["len"]):
             self.stdout.write(f"Process {index} line of User")
 
-            user, _ = User.objects.get_or_create(username=faker.profile()["username"])
+            user, _ = User.objects.get_or_create(
+                username=faker.profile()["username"]
+            )
             user.first_name = faker.first_name()
             user.last_name = faker.last_name()
             user.email = faker.email()
@@ -34,7 +36,9 @@ class Command(BaseCommand):
             users.append(user)
 
         for index in range(options["len"]):
-            self.stdout.write(f"Process {index} line of Chat -> Message 10000 ->? File")
+            self.stdout.write(
+                f"Process {index} line of Chat -> Message 10000 ->? File"
+            )
 
             chat = Chat()
             chat.title = faker.sentence()[0:40]
