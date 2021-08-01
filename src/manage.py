@@ -8,7 +8,7 @@ def main():
     """Run administrative tasks."""
     os.environ.setdefault("DJANGO_SETTINGS_MODULE", "settings")
     try:
-        from django.core.management import (  # noqa:import-outside-toplevel
+        from django.core.management import (  # pylint: disable=C0415
             execute_from_command_line,
         )
     except ImportError as exc:

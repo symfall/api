@@ -1,11 +1,10 @@
-version: "3"
+version: "3.9"
 
 services:
 
     db:
       image: postgres:13
       environment:
-        - POSTGRES_DB=postgres
         - POSTGRES_PASSWORD=postgres
 
     redis:
@@ -23,3 +22,4 @@ services:
         - SECRET_KEY=${SECRET_KEY}
         - DJANGO_ALLOWED_HOSTS=${DJANGO_ALLOWED_HOSTS}
         - DEBUG=${DEBUG}
+        - ENVIROMENT=test

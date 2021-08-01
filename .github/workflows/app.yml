@@ -19,10 +19,13 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    - name: Build and Test with pytest
+    - name: Build and Check quality
       run: |
         docker-compose -f composes/test.yml build
-        docker-compose -f composes/test.yml run -T --rm api bash -c "poetry export --without-hashes --dev | poetry run pip install -r /dev/stdin; pytest ./"
+        docker-compose -f composes/test.yml run -T api bash -c \
+        "poetry export --without-hashes --dev | poetry run pip install -r /dev/stdin; pylint --load-plugins pylint_django --django-settings-module=settings.default ."
+        docker-compose -f composes/test.yml run -T api bash -c \
+        "poetry export --without-hashes --dev | poetry run pip install -r /dev/stdin; pytest ."
 
   deploy:
 

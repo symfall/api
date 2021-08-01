@@ -24,8 +24,10 @@ class GetChatViewTest(APITestCase):
     @freeze_time("1991-02-20 00:00:00")
     def test_get_chat(self):
         self.client.login(username="test_creator", password="12345")
-        response = self.client.get(reverse("api:chat-list"), data={"format": "json"})
-        self.assertEqual(response.status_code, 200)
+        response = self.client.get(
+            reverse("api:chat-list"), data={"format": "json"}
+        )
+        self.assertEqual(response.status_code, 200)  # pylint: disable=E1101
         self.assertEqual(
             {
                 "count": 1,
@@ -48,7 +50,7 @@ class GetChatViewTest(APITestCase):
                     }
                 ],
             },
-            response.json(),
+            response.json(),  # pylint: disable=E1101
         )
 
 
@@ -139,7 +141,9 @@ class GetMessageViewTest(APITestCase):
     @freeze_time("1991-02-20 00:00:00")
     def test_get_message(self):
         self.client.login(username="test_sender", password="1234567")
-        response = self.client.get(reverse("api:message-list"), data={"format": "json"})
+        response = self.client.get(
+            reverse("api:message-list"), data={"format": "json"}
+        )
         self.assertEqual(response.status_code, 200)
         self.assertEqual(
             {
@@ -215,7 +219,7 @@ class DeleteMessageViewTest(APITestCase):
             title="test-chat",
             creator=self.test_sender,
         )
-        self.test_delete_message = Message.objects.create(
+        self.test_message = Message.objects.create(
             sender=self.test_sender,
             chat=self.test_chat,
             message="delete hello world",
@@ -225,7 +229,10 @@ class DeleteMessageViewTest(APITestCase):
     def test_delete_message(self):
         self.client.login(username="test_delete_sender", password="1234567")
         response = self.client.delete(
-            reverse("api:message-detail", kwargs={"pk": self.test_delete_message.pk})
+            reverse(
+                "api:message-detail",
+                kwargs={"pk": self.test_message.pk},
+            )
         )
         self.assertEqual(response.status_code, 204)
 
@@ -240,7 +247,7 @@ class EditMessageViewTest(APITestCase):
             title="test-chat",
             creator=self.test_sender,
         )
-        self.test_edit_message = Message.objects.create(
+        self.test_message = Message.objects.create(
             sender=self.test_sender,
             chat=self.test_chat,
             message="hello world",
@@ -257,7 +264,8 @@ class EditMessageViewTest(APITestCase):
         self.client.login(username="test_edit_sender", password="1234567")
         response = self.client.put(
             reverse(
-                "api:message-detail", kwargs={"pk": str(self.test_edit_message.pk)}
+                "api:message-detail",
+                kwargs={"pk": str(self.test_message.pk)},
             ),
             data=json.dumps(self.edit_message),
             content_type="application/json",
@@ -288,7 +296,9 @@ class GetFileViewTest(APITestCase):
 
     def test_get_file(self):
         self.client.login(username="test_creator", password="12345")
-        response = self.client.get(reverse("api:file-list"), data={"format": "json"})
+        response = self.client.get(
+            reverse("api:file-list"), data={"format": "json"}
+        )
         self.assertEqual(response.status_code, 200)
         self.assertEqual(
             {
@@ -296,7 +306,10 @@ class GetFileViewTest(APITestCase):
                 "next": None,
                 "previous": None,
                 "results": [
-                    {"document": None, "message": str(Message.objects.first().id)}
+                    {
+                        "document": None,
+                        "message": str(Message.objects.first().id),
+                    }
                 ],
             },
             response.json(),
