@@ -28,6 +28,29 @@ class AuthViewSet(viewsets.GenericViewSet):
     """
 
     @swagger_auto_schema(
+        responses={
+            status.HTTP_200_OK: UserSerializer(),
+        },
+    )
+    @action(
+        methods=("POST",),
+        detail=False,
+        permission_classes=(permissions.IsAuthenticated,),
+        serializer_class=EmptySerializer,
+        pagination_class=None,
+    )
+    def user(self, request):
+        """
+        Retrieve basic data of current user
+        """
+        user_serializer = UserSerializer(request.user)
+
+        return Response(
+            data=user_serializer.data,
+            status=status.HTTP_200_OK,
+        )
+
+    @swagger_auto_schema(
         request_body=LoginSerializer,
         responses={
             status.HTTP_200_OK: LoginSerializer(),
@@ -57,9 +80,9 @@ class AuthViewSet(viewsets.GenericViewSet):
             raise serializers.ValidationError(
                 "Invalid username/password. Please try again!"
             )
-        data = UserSerializer(user).data
+        user_serializer = UserSerializer(user)
 
-        return Response(data=data, status=status.HTTP_200_OK)
+        return Response(data=user_serializer.data, status=status.HTTP_200_OK)
 
     @swagger_auto_schema(
         responses={
@@ -67,10 +90,10 @@ class AuthViewSet(viewsets.GenericViewSet):
         },
     )
     @action(
-        methods=("GET",),
+        methods=("POST",),
         detail=False,
-        permission_classes=(permissions.IsAuthenticated,),
-        serializer_class=EmptySerializer,  # pylint: disable=no-self-use
+        permission_classes=(permissions.AllowAny,),
+        serializer_class=EmptySerializer,
         pagination_class=None,
     )
     def logout(self, request):
@@ -160,7 +183,7 @@ class AuthViewSet(viewsets.GenericViewSet):
         detail=False,
         permission_classes=(permissions.AllowAny,),
         serializer_class=UserRegisterSerializer,
-        url_path=r"activation/(?P<user_id_b64>[\d\w-]+)/(?P<token>[\d\w-]+)",  # pylint: disable=no-self-use
+        url_path=r"activation/(?P<user_id_b64>[\d\w-]+)/(?P<token>[\d\w-]+)",
         pagination_class=None,
     )
     def activation(self, request, user_id_b64, token):

@@ -20,10 +20,8 @@ class ChoiceField(ChoiceField):  # pylint: disable=E0102
         # Map the string representation of choices to the underlying value.
         # Allows us to deal with eg. integer choices while supporting either
         # integer or string input, but still get the correct datatype out.
-        self.choice_strings_to_values = (  # pylint: disable=W0201
-            {
-                str(key): value for key, value in self.choices.items()
-            }
-        )
+        self.choice_strings_to_values = {  # pylint: disable=W0201
+            str(key): value for key, value in self.choices.items()
+        }
 
     choices = property(_get_choices, _set_choices)

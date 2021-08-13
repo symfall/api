@@ -6,11 +6,14 @@ export $(shell sed 's/=.*//' .env)
 help: ## This help.
 	@awk 'BEGIN {FS = ":.*?## "} /^[a-zA-Z_-]+:.*?## / {printf "\033[36m%-30s\033[0m %s\n", $$1, $$2}' $(MAKEFILE_LIST)
 
-up: ## Start all or c=<name> containers in foreground
+up: ## Up all or c=<name> containers in foreground
 	docker-compose -f $(or $(DOCKER_COMPOSE_FILE), composes/local.yml) up $(c)
 
-start: ## Start all or c=<name> containers in background
+up-d: ## Up all or c=<name> containers in background
 	docker-compose -f $(or $(DOCKER_COMPOSE_FILE), composes/local.yml) up -d $(c)
+
+start: ## Start all or c=<name> containers
+	docker-compose -f $(or $(DOCKER_COMPOSE_FILE), composes/local.yml) start $(c)
 
 build: ## Build all or c=<name> containers in background
 	docker-compose -f $(or $(DOCKER_COMPOSE_FILE), composes/local.yml) up --build -d $(c)

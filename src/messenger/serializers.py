@@ -11,8 +11,10 @@ User = get_user_model()
 
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
+        ref_name = "MessengerUserSerializer"
         model = User
         fields = (
+            "id",
             "username",
             "email",
             "last_login",
@@ -25,10 +27,13 @@ class ChatSerializer(serializers.ModelSerializer):
     class Meta:
         model = Chat
         fields = (
+            "id",
             "title",
             "creator",
             "invited",
             "is_closed",
+            "created_at",
+            "updated_at",
         )
 
 
@@ -39,6 +44,7 @@ class ChatViewSerializer(serializers.ModelSerializer):
     class Meta:
         model = Chat
         fields = (
+            "id",
             "title",
             "creator",
             "invited",
@@ -52,21 +58,7 @@ class MessageSerializer(serializers.ModelSerializer):
     class Meta:
         model = Message
         fields = (
-            "sender",
-            "chat",
-            "message",
-            "status",
-        )
-
-
-class MessageViewSerializer(serializers.ModelSerializer):
-    sender = UserSerializer()
-    chat = ChatViewSerializer()
-    status = ChoiceField(choices=STATUS.choices)
-
-    class Meta:
-        model = Message
-        fields = (
+            "id",
             "sender",
             "chat",
             "message",
@@ -80,6 +72,29 @@ class FileSerializer(serializers.ModelSerializer):
     class Meta:
         model = File
         fields = (
+            "id",
             "document",
             "message",
+            "created_at",
+            "updated_at",
+        )
+
+
+class MessageViewSerializer(serializers.ModelSerializer):
+    sender = UserSerializer()
+    chat = ChatViewSerializer()
+    status = ChoiceField(choices=STATUS.choices)
+    file_set = FileSerializer(many=True)
+
+    class Meta:
+        model = Message
+        fields = (
+            "id",
+            "sender",
+            "chat",
+            "message",
+            "status",
+            "created_at",
+            "updated_at",
+            "file_set",
         )

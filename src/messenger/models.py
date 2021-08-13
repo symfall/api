@@ -2,17 +2,17 @@ from django.contrib.auth import get_user_model
 from django.db import models
 
 from .choices import STATUS
-from .mixins import TimestampMixin, UUIDModel
+from .mixins import TimestampMixin
 
 User = get_user_model()
 
 
-class Chat(UUIDModel, TimestampMixin, models.Model):
+class Chat(TimestampMixin, models.Model):
     """
     Chat model
     """
 
-    title = models.CharField(max_length=50)
+    title = models.CharField(max_length=50, unique=True)
     creator = models.ForeignKey(
         User, on_delete=models.CASCADE, related_name="creator"
     )
@@ -20,7 +20,7 @@ class Chat(UUIDModel, TimestampMixin, models.Model):
     is_closed = models.BooleanField(default=False)
 
 
-class Message(UUIDModel, TimestampMixin, models.Model):
+class Message(TimestampMixin, models.Model):
     """
     Message model
     """
@@ -42,7 +42,7 @@ class Message(UUIDModel, TimestampMixin, models.Model):
     )
 
 
-class File(UUIDModel, TimestampMixin, models.Model):
+class File(TimestampMixin, models.Model):
     """
     File model
     """

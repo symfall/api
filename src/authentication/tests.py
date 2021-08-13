@@ -4,92 +4,10 @@ from django.contrib.auth import get_user_model
 from django.contrib.auth.tokens import default_token_generator
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode
-from freezegun import freeze_time
 from rest_framework.reverse import reverse
 from rest_framework.test import APITestCase
 
 User = get_user_model()
-
-
-class GetUserViewTest(APITestCase):
-    def setUp(self) -> None:
-        self.user = User.objects.create_user(
-            username="test_user",
-            password="1234567",
-            email="test_user@gmail.com",
-        )
-
-    @freeze_time("1991-02-20 00:00:00")
-    def test_get_user(self):
-        self.client.login(
-            username="test_user",
-            password="1234567",
-        )
-        response = self.client.get(
-            path=reverse("api:user-list"),
-            data={"format": "json"},
-        )
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(
-            {
-                "count": 1,
-                "next": None,
-                "previous": None,
-                "results": [
-                    {
-                        "username": "test_user",
-                        "email": "test_user@gmail.com",
-                        "last_login": "1991-02-20T00:00:00Z",
-                        "first_name": "",
-                        "last_name": "",
-                    }
-                ],
-            },
-            response.json(),
-        )
-
-
-class DeleteUserViewTest(APITestCase):
-    def setUp(self) -> None:
-        self.user = User.objects.create_user(
-            username="test_delete_user",
-            password="1234567",
-            email="test_delete_user@gmail.com",
-        )
-
-    def test_delete_user(self):
-        self.client.login(
-            username="test_delete_user",
-            password="1234567",
-        )
-        response = self.client.delete(
-            path=reverse("api:user-detail", kwargs={"pk": self.user.pk}),
-        )
-        self.assertEqual(response.status_code, 204)
-
-
-class EditUserViewTest(APITestCase):
-    def setUp(self) -> None:
-        self.user = User.objects.create_user(
-            username="test_edit_user",
-            password="1234567",
-            email="test_edit_user@gmail.com",
-        )
-
-        self.edit_user = {
-            "username": "test_user_edit",
-            "password": "3214532",
-            "email": "test_user_edit@gmail.com",
-        }
-
-    def test_edit_user(self):
-        self.client.login(username="test_edit_user", password="1234567")
-        response = self.client.put(
-            reverse("api:user-detail", kwargs={"pk": self.user.pk}),
-            json.dumps(self.edit_user),
-            content_type="application/json",
-        )
-        self.assertEqual(response.status_code, 200)
 
 
 class AddUserViewTest(APITestCase):
@@ -101,12 +19,11 @@ class AddUserViewTest(APITestCase):
         )
 
     def test_user_logout(self):
-        self.client.login(username="test_user", password="1234567")
-        response = self.client.get(
+        response = self.client.post(
             reverse("api:auth-logout"),
             content_type="application/json",
         )
-        self.assertEqual(
+        self.assertDictEqual(
             response.data,
             {"success": "Successfully logged out"},
         )
@@ -123,9 +40,11 @@ class AddUserViewTest(APITestCase):
             ),
             content_type="application/json",
         )
-        self.assertEqual(
+        self.assertDictEqual(
             response.data,
             {
+                "id": self.user.id,
+                "auth_token": None,
                 "username": "test_user",
                 "email": "test_user@gmail.com",
                 "last_login": None,
@@ -146,9 +65,12 @@ class AddUserViewTest(APITestCase):
             ),
             content_type="application/json",
         )
-        self.assertEqual(
+        registered_user = User.objects.get(username="username")
+        self.assertDictEqual(
             response.data,
             {
+                "id": registered_user.id,
+                "auth_token": None,
                 "username": "username",
                 "email": "test_user_register@mail.com",
                 "last_login": None,
@@ -171,7 +93,7 @@ class AddUserViewTest(APITestCase):
             ),
             content_type="application/json",
         )
-        self.assertEqual(
+        self.assertDictEqual(
             response.data,
             {"success": "Successfully activated account"},
         )

@@ -10,11 +10,13 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = (
+            "id",
             "username",
             "email",
             "last_login",
             "first_name",
             "last_name",
+            "auth_token",
         )
 
 
@@ -27,7 +29,7 @@ class SuccessSerializer(serializers.Serializer):  # pylint: disable=W0223
 
 
 class LoginSerializer(serializers.Serializer):  # pylint: disable=W0223
-    username = serializers.CharField(max_length=300, required=True)
+    username = serializers.CharField(max_length=32, required=True)
     password = serializers.CharField(required=True)
 
 
