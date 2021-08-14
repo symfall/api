@@ -24,6 +24,8 @@ sentry_sdk.init(  # pylint: disable=E0110
     send_default_pii=True,
 )
 
+DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve(strict=True).parent.parent
 
@@ -94,6 +96,7 @@ INSTALLED_APPS = [
     "django_extensions",
     #
     "rest_framework",
+    "rest_framework.authtoken",
     "drf_yasg",
     #
     "messenger",
@@ -121,19 +124,18 @@ ROOT_URLCONF = "urls"
 
 REST_FRAMEWORK = {
     "DEFAULT_PAGINATION_CLASS": (
-        "rest_framework.pagination.PageNumberPagination"
+        "rest_framework.pagination.LimitOffsetPagination"
     ),
     "DEFAULT_SCHEMA_CLASS": "rest_framework.schemas.coreapi.AutoSchema",
     "DEFAULT_AUTHENTICATION_CLASSES": (
-        "rest_framework.authentication.SessionAuthentication",
         "rest_framework.authentication.TokenAuthentication",
+        "rest_framework.authentication.BasicAuthentication",
     ),
     "PAGE_SIZE": 10,
 }
 
 FILE_UPLOAD_HANDLERS = [
     "django.core.files.uploadhandler.MemoryFileUploadHandler",
-    # "django.core.files.uploadhandler.TemporaryFileUploadHandler",
 ]
 
 MEDIA_ROOT = BASE_DIR.parent / "media/"
@@ -239,9 +241,7 @@ LOGIN_URL = "rest_framework:login"
 LOGOUT_URL = "rest_framework:logout"
 
 SWAGGER_SETTINGS = {
-    "USE_SESSION_AUTH": True,
-    # 'LOGIN_URL': '/admin/login/',
-    # 'LOGOUT_URL': '/admin/logout/',
+    "USE_SESSION_AUTH": False,
 }
 
 FRONT_URL = os.getenv("FRONT_URL", "http://localhost:8000")

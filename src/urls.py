@@ -14,7 +14,6 @@ Including another URLconf
 """
 from django.conf import settings
 from django.conf.urls.static import static
-from django.contrib import admin
 from django.urls import include, path, re_path
 from drf_yasg import openapi
 from drf_yasg.views import get_schema_view
@@ -29,8 +28,8 @@ SchemaView = get_schema_view(
         default_version="v1",
         description="API of the Symfall messenger",
         terms_of_service="https://www.google.com/policies/terms/",
-        contact=openapi.Contact(email="valeriiduz@gmail.com"),
-        license=openapi.License(name="BSD License"),
+        contact=openapi.Contact(email="valerii.duz@symfall.com"),
+        license=openapi.License(name="MIT License"),
     ),
     public=True,
     permission_classes=(permissions.AllowAny,),
@@ -42,15 +41,24 @@ router.register(
     authentication_views.AuthViewSet,
     basename="auth",
 )
-
-router.register(r"users", messenger_views.UserViewSet, basename="user")
-router.register(r"chat", messenger_views.ChatViewSet, basename="chat")
+router.register(
+    r"chat",
+    messenger_views.ChatViewSet,
+    basename="chat",
+)
+router.register(
+    r"chat/search", messenger_views.SearchChatViewSet, basename="chat_search"
+)
 router.register(
     r"message",
     messenger_views.MessageViewSet,
     basename="message",
 )
-router.register(r"file", messenger_views.FileViewSet, basename="file")
+router.register(
+    r"file",
+    messenger_views.FileViewSet,
+    basename="file",
+)
 
 
 def trigger_error(request):
@@ -62,7 +70,6 @@ def trigger_error(request):
 
 urlpatterns = [
     path("sentry-debug/", trigger_error),
-    path("admin/", admin.site.urls),
     path(
         "api-auth/",
         include(

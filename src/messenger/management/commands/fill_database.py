@@ -36,8 +36,12 @@ class Command(BaseCommand):
             users.append(user)
 
         for index in range(options["len"]):
+
+            random_range = randrange(1000)
+
             self.stdout.write(
-                f"Process {index} line of Chat -> Message 10000 ->? File"
+                f"Process {index} line of Chat -> "
+                f"Message {random_range} ->? File"
             )
 
             chat = Chat()
@@ -45,14 +49,14 @@ class Command(BaseCommand):
             chat.creator = choice(users)
             chat.save()
 
-            for _ in range(randrange(10000)):
+            for _ in range(random_range):
                 message = Message()
                 message.sender = choice(users)
                 message.chat = chat
                 message.message = faker.text()
                 message.save()
 
-                if choice([True, False]):
+                if choice([True, False, False, False]):
                     image_file = io.BytesIO()
                     image = Image.new(
                         "RGBA",
