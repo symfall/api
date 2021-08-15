@@ -1,4 +1,3 @@
-from django.db.models import Q
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, mixins, permissions, viewsets
 from rest_framework.pagination import LimitOffsetPagination
@@ -42,11 +41,8 @@ class ChatViewSet(viewsets.ModelViewSet):
 
     def get_queryset(self):
         if self.request.method == "GET":
-            return Chat.objects.filter(
-                Q(creator=self.request.user.id)
-                | Q(invited=self.request.user.id)
-            )
-        return Chat.objects.filter(Q(creator=self.request.user.id))
+            return Chat.objects.all_mine_and_invited(user=self.request.user)
+        return Chat.objects.all_mine(user=self.request.user)
 
 
 class SearchChatViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
@@ -65,9 +61,7 @@ class SearchChatViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
     serializer_class = ChatViewSerializer
 
     def get_queryset(self):
-        return Chat.objects.exclude(
-            Q(creator=self.request.user.id) | Q(invited=self.request.user.id)
-        )
+        return Chat.objects.exclude_mine_and_invited(user=self.request.user)
 
 
 class MessageViewSet(viewsets.ModelViewSet):
@@ -92,20 +86,7 @@ class MessageViewSet(viewsets.ModelViewSet):
         return MessageSerializer
 
     def get_queryset(self):
-        if (
-            not self.request.query_params.get("chat")
-            and self.request.method == "GET"
-        ):
-            return Message.objects.none()
-
-        return Message.objects.prefetch_related(
-            "chat", "chat__creator", "chat__invited"
-        ).filter(
-            chat__in=Chat.objects.filter(
-                Q(creator=self.request.user.id)
-                | Q(invited=self.request.user.id)
-            )
-        )
+        return Message.objects.all_mine(user=self.request.user)
 
 
 class FileViewSet(viewsets.ModelViewSet):
@@ -127,14 +108,4 @@ class FileViewSet(viewsets.ModelViewSet):
     )
 
     def get_queryset(self):
-        if self.request.method == "GET":
-            return File.objects.none()
-
-        return File.objects.filter(
-            message__in=Message.objects.filter(
-                chat__in=Chat.objects.filter(
-                    Q(creator=self.request.user.id)
-                    | Q(invited=self.request.user.id)
-                )
-            )
-        )
+        return File.objects.all_mine(user=self.request.user)

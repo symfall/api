@@ -2,6 +2,7 @@ from django.contrib.auth import get_user_model
 from django.db import models
 
 from .choices import STATUS
+from .managers import ChatManager, FileManager, MessageManager
 from .mixins import TimestampMixin
 
 User = get_user_model()
@@ -18,6 +19,8 @@ class Chat(TimestampMixin, models.Model):
     )
     invited = models.ManyToManyField(User, related_name="invited")
     is_closed = models.BooleanField(default=False)
+
+    objects = ChatManager()
 
 
 class Message(TimestampMixin, models.Model):
@@ -41,6 +44,8 @@ class Message(TimestampMixin, models.Model):
         default=STATUS.NOTVIEWED,  # pylint: disable=E1101
     )
 
+    objects = MessageManager()
+
 
 class File(TimestampMixin, models.Model):
     """
@@ -50,5 +55,4 @@ class File(TimestampMixin, models.Model):
     document = models.FileField(blank=False, upload_to="file/")
     message = models.ForeignKey(Message, on_delete=models.CASCADE)
 
-    class Meta:
-        ordering = ("document",)
+    objects = FileManager()
