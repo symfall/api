@@ -1,5 +1,4 @@
 import json
-from unittest import skip
 
 from django.contrib.auth import get_user_model
 from django.urls import reverse
@@ -314,6 +313,7 @@ class EditMessageViewTest(APITestCase):
 
 
 class GetFileViewTest(APITestCase):
+    @freeze_time("1991-02-20 00:00:00")
     def setUp(self) -> None:
         self.test_creator = User.objects.create_user(
             username="test_creator",
@@ -335,7 +335,6 @@ class GetFileViewTest(APITestCase):
             message=self.test_message,
         )
 
-    @skip("Until change this flow")
     def test_get_file(self):
         self.client.credentials(
             HTTP_AUTHORIZATION=f"Token {self.test_creator.auth_token.key}"
@@ -344,15 +343,18 @@ class GetFileViewTest(APITestCase):
             reverse("api:file-list"), data={"format": "json"}
         )
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(
+        self.assertDictEqual(
             {
                 "count": 1,
                 "next": None,
                 "previous": None,
                 "results": [
                     {
+                        "id": self.test_file.id,
                         "document": None,
-                        "message": str(Message.objects.first().id),
+                        "message": self.test_message.id,
+                        "created_at": "1991-02-20T00:00:00Z",
+                        "updated_at": "1991-02-20T00:00:00Z",
                     }
                 ],
             },
