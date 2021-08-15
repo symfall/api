@@ -52,4 +52,4 @@ build-backend = "poetry.masonry.api"
 
 [tool.black]
 line-length = 79
-include = '\.pyi?$'
+include = "\\.pyi?$"

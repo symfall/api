@@ -35,7 +35,7 @@ SchemaView = get_schema_view(
     permission_classes=(permissions.AllowAny,),
 )
 
-router = routers.DefaultRouter()
+router = routers.DefaultRouter(trailing_slash=False)
 router.register(
     r"auth",
     authentication_views.AuthViewSet,
@@ -93,5 +93,5 @@ urlpatterns = [
         SchemaView.with_ui("redoc", cache_timeout=0),
         name="schema-redoc",
     ),
-    re_path("^api/", include((router.urls, "api"))),
+    re_path("^api/", include((router.urls, "api")), name="api"),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

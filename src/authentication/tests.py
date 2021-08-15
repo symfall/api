@@ -95,5 +95,8 @@ class AddUserViewTest(APITestCase):
         )
         self.assertDictEqual(
             response.data,
-            {"success": "Successfully activated account"},
+            {
+                "success": "Successfully activated account",
+                "token": self.user.auth_token.key,
+            },
         )

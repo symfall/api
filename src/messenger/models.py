@@ -38,7 +38,7 @@ class Message(TimestampMixin, models.Model):
         on_delete=models.CASCADE,
         related_name="recipient",
     )
-    message = models.TextField()
+    text = models.TextField()
     status = models.PositiveSmallIntegerField(
         choices=STATUS,
         default=STATUS.NOTVIEWED,  # pylint: disable=E1101
