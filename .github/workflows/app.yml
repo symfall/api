@@ -23,9 +23,9 @@ jobs:
       run: |
         docker-compose -f composes/test.yml build
         docker-compose -f composes/test.yml run -T api bash -c \
-        "poetry export --without-hashes --dev | poetry run pip install -r /dev/stdin; pylint --load-plugins pylint_django --django-settings-module=settings.default ."
-        docker-compose -f composes/test.yml run -T api bash -c \
-        "poetry export --without-hashes --dev | poetry run pip install -r /dev/stdin; pytest ."
+        "poetry export --without-hashes --dev | poetry run pip install -r /dev/stdin; \
+         pylint --load-plugins pylint_django --django-settings-module=settings.default .; \
+         pytest ."
 
   deploy:
 

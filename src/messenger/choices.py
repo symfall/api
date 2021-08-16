@@ -1,6 +1,7 @@
-from extended_choices import Choices
+from django.db.models import IntegerChoices
+from django.utils.translation import gettext_lazy as _
 
-STATUS = Choices(
-    ("VIEWED", 1, "viewed"),
-    ("NOTVIEWED", 2, "not viewed"),
-)
+
+class STATUS(IntegerChoices):
+    VIEWED = 1, _("viewed")
+    NOT_VIEWED = 2, _("not viewed")

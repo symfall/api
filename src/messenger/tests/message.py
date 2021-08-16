@@ -33,7 +33,7 @@ class GetMessageViewTest(APITestCase):
             HTTP_AUTHORIZATION=f"Token {self.test_sender.auth_token.key}"
         )
         response = self.client.get(
-            reverse("api:message-list"),
+            reverse("messenger:message-list"),
             data={"chat": str(self.test_chat.id), "format": "json"},
         )
         self.assertEqual(response.status_code, 200)
@@ -70,7 +70,7 @@ class GetMessageViewTest(APITestCase):
                         },
                         "id": self.test_message.id,
                         "text": "hello world",
-                        "status": "not viewed",
+                        "status": 2,
                         "created_at": "1991-02-20T00:00:00Z",
                         "updated_at": "1991-02-20T00:00:00Z",
                         "file_set": [],
@@ -103,7 +103,7 @@ class CreateMessageViewTest(APITestCase):
             HTTP_AUTHORIZATION=f"Token {self.test_sender.auth_token.key}"
         )
         response = self.client.post(
-            reverse("api:message-list"),
+            reverse("messenger:message-list"),
             data=self.message,
         )
         self.assertEqual(response.status_code, 201)
@@ -132,7 +132,7 @@ class DeleteMessageViewTest(APITestCase):
         )
         response = self.client.delete(
             reverse(
-                "api:message-detail",
+                "messenger:message-detail",
                 kwargs={"pk": self.test_message.pk},
             )
         )
@@ -168,7 +168,7 @@ class EditMessageViewTest(APITestCase):
         )
         response = self.client.put(
             reverse(
-                "api:message-detail",
+                "messenger:message-detail",
                 kwargs={"pk": str(self.test_message.pk)},
             ),
             data=self.edit_message,

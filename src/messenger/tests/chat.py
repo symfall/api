@@ -29,7 +29,7 @@ class GetChatViewTest(APITestCase):
             HTTP_AUTHORIZATION=f"Token {self.test_creator.auth_token.key}"
         )
         response = self.client.get(
-            reverse("api:chat-list"), data={"format": "json"}
+            reverse("messenger:chat-list"), data={"format": "json"}
         )
         self.assertEqual(response.status_code, 200)  # pylint: disable=E1101
         self.assertDictEqual(
@@ -81,7 +81,7 @@ class AddChatViewTest(APITestCase):
             HTTP_AUTHORIZATION=f"Token {self.test_creator.auth_token.key}"
         )
         response = self.client.post(
-            reverse("api:chat-list"),
+            reverse("messenger:chat-list"),
             data=self.chat,
         )
         self.assertEqual(response.status_code, 201)
@@ -102,7 +102,9 @@ class DeleteChatViewTest(APITestCase):
             HTTP_AUTHORIZATION=f"Token {self.test_creator.auth_token.key}"
         )
         response = self.client.delete(
-            reverse("api:chat-detail", args=(str(self.test_chat_delete.pk),))
+            reverse(
+                "messenger:chat-detail", args=(str(self.test_chat_delete.pk),)
+            )
         )
         self.assertEqual(response.status_code, 204)
 
@@ -131,7 +133,8 @@ class EditChatViewTest(APITestCase):
         )
         response = self.client.put(
             reverse(
-                "api:chat-detail", kwargs={"pk": str(self.test_chat_edit.pk)}
+                "messenger:chat-detail",
+                kwargs={"pk": str(self.test_chat_edit.pk)},
             ),
             data=self.edit_chat,
         )

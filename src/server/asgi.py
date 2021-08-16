@@ -1,27 +1,26 @@
 """
-ASGI config for symfall project.
+ASGI config for Symfall project.
 
 It exposes the ASGI callable as a module-level variable named ``application``.
 
-For more information on this file, see
-https://docs.djangoproject.com/en/3.1/howto/deployment/asgi/
 """
 
 import os
 
-from channels.auth import AuthMiddlewareStack
 from channels.routing import ProtocolTypeRouter, URLRouter
+from channels.security.websocket import AllowedHostsOriginValidator
 from django.core.asgi import get_asgi_application
 
-from messenger import routing
+from messenger.middleware import TokenAuthMiddleware
+from messenger.routers import websocket_urlpatterns
 
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "settings")
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "settings.default")
 
 application = ProtocolTypeRouter(
     {
         "http": get_asgi_application(),
-        "websocket": AuthMiddlewareStack(
-            URLRouter(routing.websocket_urlpatterns)
+        "websocket": AllowedHostsOriginValidator(
+            TokenAuthMiddleware(URLRouter(websocket_urlpatterns)),
         ),
     }
 )

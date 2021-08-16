@@ -120,7 +120,6 @@ MIDDLEWARE = [
 ]
 
 CORS_ALLOWED_ORIGINS = [
-    "https://google.com",
     "http://localhost:8000",
     "http://localhost:3000",
 ]
@@ -152,10 +151,14 @@ REST_FRAMEWORK = {
     "DEFAULT_VERSIONING_CLASS": "rest_framework.versioning.URLPathVersioning",
     "PAGE_SIZE": 20,
 }
+SWAGGER_SETTINGS = {
+    "USE_SESSION_AUTH": False,
+}
 
 FILE_UPLOAD_HANDLERS = [
     "django.core.files.uploadhandler.MemoryFileUploadHandler",
 ]
+MAX_FILE_SIZE_UPLOAD = 100 * 1024 * 1024
 
 MEDIA_ROOT = BASE_DIR.parent / "media/"
 MEDIA_URL = "/media/"
@@ -256,8 +259,3 @@ EMAIL_PORT = int(os.getenv("EMAIL_PORT", "587"))
 EMAIL_USE_TLS = strtobool(os.getenv("EMAIL_USE_TLS", "True"))
 EMAIL_HOST_USER = os.getenv("EMAIL_USER", "wrong-email@mail.com")
 EMAIL_HOST_PASSWORD = os.getenv("EMAIL_PASSWORD", "wrong-email-password")
-
-
-SWAGGER_SETTINGS = {
-    "USE_SESSION_AUTH": False,
-}

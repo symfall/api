@@ -2,6 +2,7 @@ from django.contrib.auth import get_user_model
 from django.db import models
 
 from .choices import STATUS
+from .fields import ContentTypeRestrictedFileField
 from .managers import ChatManager, FileManager, MessageManager
 from .mixins import TimestampMixin
 
@@ -40,8 +41,8 @@ class Message(TimestampMixin, models.Model):
     )
     text = models.TextField()
     status = models.PositiveSmallIntegerField(
-        choices=STATUS,
-        default=STATUS.NOTVIEWED,  # pylint: disable=E1101
+        choices=STATUS.choices,
+        default=STATUS.NOT_VIEWED,
     )
 
     objects = MessageManager()
@@ -52,7 +53,11 @@ class File(TimestampMixin, models.Model):
     File model
     """
 
-    document = models.FileField(blank=False, upload_to="file/")
+    document = ContentTypeRestrictedFileField(
+        blank=False,
+        upload_to="file/",
+        content_types=("activate"),
+    )
     message = models.ForeignKey(Message, on_delete=models.CASCADE)
 
     objects = FileManager()

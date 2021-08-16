@@ -12,7 +12,6 @@ from rest_framework.response import Response
 
 from authentication.emails import send_activation_email
 from authentication.serializers import (
-    AuthUserSerializer,
     EmptySerializer,
     LoginSerializer,
     PasswordChangeSerializer,
@@ -162,12 +161,13 @@ class AuthViewSet(viewsets.GenericViewSet):
         user_serializer = UserSerializer(user)
 
         activate_url = get_current_site(request).domain + reverse(
-            "api:auth-activation",
+            "authentication:auth-activation",
             kwargs={
                 "user_id_b64": urlsafe_base64_encode(force_bytes(user.pk)),
                 "token": default_token_generator.make_token(user=user),
             },
         )
+
         send_activation_email(
             recipient_list=[user.email],
             activate_url=activate_url,
@@ -179,7 +179,7 @@ class AuthViewSet(viewsets.GenericViewSet):
 
     @swagger_auto_schema(
         responses={
-            status.HTTP_200_OK: AuthUserSerializer(),
+            status.HTTP_200_OK: UserSerializer(),
         }
     )
     @action(
