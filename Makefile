@@ -19,7 +19,7 @@ build: ## Build all or c=<name> containers in background
 	docker-compose -f $(or $(DOCKER_COMPOSE_FILE), composes/local.yml) up --build -d $(c)
 
 build-f: ## Build all or c=<name> containers in foreground
-	docker-compose -f $(or $(DOCKER_COMPOSE_FILE), composes/local.yml) up --build -d $(c)
+	docker-compose -f $(or $(DOCKER_COMPOSE_FILE), composes/local.yml) up --build $(c)
 
 stop: ## Stop all or c=<name> containers
 	docker-compose -f $(or $(DOCKER_COMPOSE_FILE), composes/local.yml) stop $(c)
@@ -48,6 +48,9 @@ images: ## Show all images
 
 exec: ## Exec container
 	docker-compose -f $(or $(DOCKER_COMPOSE_FILE), composes/local.yml) exec $(or $(c), api) bash
+
+manage: ## Get health-check info
+	docker-compose -f $(or $(DOCKER_COMPOSE_FILE), composes/local.yml) exec $(or $(c), api) python manage.py $(e)
 
 health-check: ## Get health-check info
 	docker-compose -f $(or $(DOCKER_COMPOSE_FILE), composes/local.yml) exec $(or $(c), api) python manage.py health_check

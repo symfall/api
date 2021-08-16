@@ -7,11 +7,14 @@ where you can correspond with friends and colleagues like Telegram or Viber, but
 We used Python framework Django for Back-end part. Symfall is not a commercial project but rather as a project for a portfolio.
 
 ## Start project:
-After installing the project to run it, you need to write command: 
+To start the project you should create `env` file. You can copy values from `.env.dist`
+and fill them by self values
+
+After that you can start project by this command: 
 ```
 make build
 ```
-and wait for the server to start in localhost.
+Build and start server may take some time ~5min
 
 ## Run tests:
 To start tests you need write 

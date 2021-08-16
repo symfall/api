@@ -3,27 +3,38 @@ from django.core.mail import send_mail
 from django.template.loader import get_template
 
 
-def send_email(
+def get_render_template(template_name, context):
+    email_txt = get_template("{}.txt".format(template_name))
+    email_html = get_template("{}.html".format(template_name))
+
+    email_txt_content = email_txt.render(context)
+    email_html_content = email_html.render(context)
+
+    return email_txt_content, email_html_content
+
+
+def send_activation_email(
     recipient_list=None,
     activate_url=None,
 ):
     """
-    Doo for send email
+    Send activation email with html template to recipient_list
     """
     subject = "Thank you for your registration!"
-    message = "it  means a world to us."
     from_email = settings.EMAIL_HOST_USER
 
-    template = get_template("activation.html")
+    txt_template, html_template = get_render_template(
+        template_name="activation",
+        context={
+            "activate_url": activate_url,
+            "project_name": settings.PROJECT_NAME,
+        },
+    )
 
     send_mail(
-        subject=subject,
-        message=message,
         from_email=from_email,
         recipient_list=recipient_list,
-        html_message=template.render(
-            context={
-                "activate_url": activate_url,
-            }
-        ),
+        subject=subject,
+        message=txt_template,
+        html_message=html_template,
     )

@@ -1,7 +1,5 @@
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import filters, mixins, permissions, viewsets
-from rest_framework.pagination import LimitOffsetPagination
-from rest_framework.parsers import MultiPartParser
+from rest_framework import filters, mixins, viewsets
 
 from messenger.models import Chat, File, Message
 from messenger.serializers import (
@@ -19,7 +17,6 @@ class ChatViewSet(viewsets.ModelViewSet):
     """
 
     lookup_value_regex = r"\d+"
-    permission_classes = (permissions.IsAuthenticated,)
     filter_backends = (
         DjangoFilterBackend,
         filters.OrderingFilter,
@@ -31,8 +28,6 @@ class ChatViewSet(viewsets.ModelViewSet):
         "delete",
         "put",
     )
-    pagination_class = LimitOffsetPagination
-    pagination_class.default_limit = 30
 
     def get_serializer_class(self):
         if self.request.method == "GET":
@@ -50,7 +45,6 @@ class SearchChatViewSet(mixins.ListModelMixin, viewsets.GenericViewSet):
     API endpoint that allows chats to be viewed or edited.
     """
 
-    permission_classes = (permissions.IsAuthenticated,)
     filter_backends = (
         filters.SearchFilter,
         filters.OrderingFilter,
@@ -69,7 +63,6 @@ class MessageViewSet(viewsets.ModelViewSet):
     API endpoint that allows message to be viewed or edited.
     """
 
-    permission_classes = (permissions.IsAuthenticated,)
     filter_backends = (DjangoFilterBackend, filters.OrderingFilter)
     filterset_fields = ("chat",)
     ordering = ("-created_at",)
@@ -95,8 +88,6 @@ class FileViewSet(viewsets.ModelViewSet):
     """
 
     serializer_class = FileSerializer
-    permission_classes = (permissions.IsAuthenticated,)
-    parser_classes = (MultiPartParser,)
     filter_backends = (DjangoFilterBackend,)
     filterset_fields = ("message",)
     ordering = ("-created_at",)
