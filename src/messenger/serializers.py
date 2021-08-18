@@ -1,7 +1,6 @@
 from django.contrib.auth import get_user_model
 from rest_framework import serializers
-
-from messenger.choice import ChoiceField
+from rest_framework.fields import ChoiceField
 
 from .choices import STATUS
 from .models import Chat, File, Message

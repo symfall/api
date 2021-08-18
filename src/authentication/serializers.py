@@ -1,7 +1,6 @@
 from django.contrib.auth import get_user_model, password_validation
 from django.contrib.auth.base_user import BaseUserManager
 from rest_framework import serializers
-from rest_framework.authtoken.models import Token
 
 User = get_user_model()
 
@@ -61,9 +60,11 @@ class UserRegisterSerializer(serializers.ModelSerializer):
         return value
 
 
-class PasswordChangeSerializer(
-    serializers.Serializer
-):  # pylint: disable=W0223
+class PasswordChangeSerializer(serializers.Serializer):  # pylint:disable=W0223
+    """
+    Password Changer
+    """
+
     current_password = serializers.CharField(required=True)
     new_password = serializers.CharField(required=True)
 
@@ -78,25 +79,3 @@ class PasswordChangeSerializer(
     def validate_new_password(value):
         password_validation.validate_password(value)
         return value
-
-
-class AuthUserSerializer(serializers.ModelSerializer):
-    auth_token = serializers.SerializerMethodField()
-
-    class Meta:
-        model = User
-        fields = (
-            "id",
-            "email",
-            "first_name",
-            "last_name",
-            "is_active",
-            "is_staff",
-            "auth_token",
-        )
-        read_only_fields = ("id", "is_active", "is_staff")
-
-    @staticmethod
-    def get_auth_token(instance):
-        token = Token.objects.create(user=instance)
-        return token.key

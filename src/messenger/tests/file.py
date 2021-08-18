@@ -37,7 +37,7 @@ class GetFileViewTest(APITestCase):
             HTTP_AUTHORIZATION=f"Token {self.test_creator.auth_token.key}"
         )
         response = self.client.get(
-            reverse("api:file-list"), data={"format": "json"}
+            reverse("messenger:file-list"), data={"format": "json"}
         )
         self.assertEqual(response.status_code, 200)
         self.assertDictEqual(
@@ -86,6 +86,8 @@ class DeleteFileTest(APITestCase):
             HTTP_AUTHORIZATION=f"Token {self.test_creator.auth_token.key}"
         )
         response = self.client.delete(
-            reverse("api:file-detail", kwargs={"pk": str(self.test_file.pk)})
+            reverse(
+                "messenger:file-detail", kwargs={"pk": str(self.test_file.pk)}
+            )
         )
         self.assertEqual(response.status_code, 204)

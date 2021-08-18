@@ -1,20 +1,20 @@
 #!/bin/sh
 
-if [ "$ENVIROMENT" = "local" ] || [ "$ENVIROMENT" = "test" ]; then
+if [ "$DEPLOYMENT_ARCHITECTURE" = "local" ] || [ "$DEPLOYMENT_ARCHITECTURE" = "test" ]; then
 
   # Install dev requirements
   poetry export --without-hashes --dev | poetry run pip install -r /dev/stdin
 
 fi
 
-if [ "$ENVIROMENT" = "test" ]; then
+if [ "$DEPLOYMENT_ARCHITECTURE" = "test" ]; then
 
   coverage -m
 
 fi
 
 
-if [ "$ENVIROMENT" = "local" ]; then
+if [ "$DEPLOYMENT_ARCHITECTURE" = "local" ]; then
 
   # Run migrations
   python "$PWD"/manage.py migrate

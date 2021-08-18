@@ -1,5 +1,3 @@
-import json
-
 from django.contrib.auth import get_user_model
 from django.contrib.auth.tokens import default_token_generator
 from django.utils.encoding import force_bytes
@@ -20,7 +18,7 @@ class AddUserViewTest(APITestCase):
 
     def test_user_logout(self):
         response = self.client.post(
-            reverse("api:auth-logout"),
+            reverse("authentication:auth-logout"),
             content_type="application/json",
         )
         self.assertDictEqual(
@@ -30,15 +28,12 @@ class AddUserViewTest(APITestCase):
 
     def test_user_login(self):
         response = self.client.post(
-            path=reverse("api:auth-login"),
-            data=json.dumps(
-                {
-                    "username": "test_user",
-                    "password": "1234567",
-                    "email": "test_user@gmail.com",
-                }
-            ),
-            content_type="application/json",
+            path=reverse("authentication:auth-login"),
+            data={
+                "username": "test_user",
+                "password": "1234567",
+                "email": "test_user@gmail.com",
+            },
         )
         self.assertDictEqual(
             response.data,
@@ -55,15 +50,12 @@ class AddUserViewTest(APITestCase):
 
     def test_user_register(self):
         response = self.client.post(
-            path=reverse("api:auth-register"),
-            data=json.dumps(
-                {
-                    "username": "username",
-                    "password": "1234567!",
-                    "email": "test_user_register@mail.com",
-                }
-            ),
-            content_type="application/json",
+            path=reverse("authentication:auth-register"),
+            data={
+                "username": "username",
+                "password": "1234567!",
+                "email": "test_user_register@mail.com",
+            },
         )
         registered_user = User.objects.get(username="username")
         self.assertDictEqual(
@@ -85,13 +77,12 @@ class AddUserViewTest(APITestCase):
 
         response = self.client.get(
             path=reverse(
-                "api:auth-activation",
+                "authentication:auth-activation",
                 kwargs={
                     "user_id_b64": user_id_b64,
                     "token": token,
                 },
-            ),
-            content_type="application/json",
+            )
         )
         self.assertDictEqual(
             response.data,
