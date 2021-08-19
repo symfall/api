@@ -1,5 +1,14 @@
 from django.contrib.auth import get_user_model
-from django.db import models
+from django.db.models import (
+    CASCADE,
+    BooleanField,
+    CharField,
+    ForeignKey,
+    ManyToManyField,
+    Model,
+    PositiveSmallIntegerField,
+    TextField,
+)
 
 from .choices import STATUS
 from .fields import ContentTypeRestrictedFileField
@@ -9,38 +18,36 @@ from .mixins import TimestampMixin
 User = get_user_model()
 
 
-class Chat(TimestampMixin, models.Model):
+class Chat(TimestampMixin, Model):
     """
     Chat model
     """
 
-    title = models.CharField(max_length=50, unique=True)
-    creator = models.ForeignKey(
-        User, on_delete=models.CASCADE, related_name="creator"
-    )
-    invited = models.ManyToManyField(User, related_name="invited")
-    is_closed = models.BooleanField(default=False)
+    title = CharField(max_length=50, unique=True)
+    creator = ForeignKey(User, on_delete=CASCADE, related_name="creator")
+    invited = ManyToManyField(User, related_name="invited")
+    is_closed = BooleanField(default=False)
 
     objects = ChatManager()
 
 
-class Message(TimestampMixin, models.Model):
+class Message(TimestampMixin, Model):
     """
     Message model
     """
 
-    sender = models.ForeignKey(
+    sender = ForeignKey(
         to=User,
-        on_delete=models.CASCADE,
+        on_delete=CASCADE,
         related_name="sender",
     )
-    chat = models.ForeignKey(
+    chat = ForeignKey(
         to=Chat,
-        on_delete=models.CASCADE,
+        on_delete=CASCADE,
         related_name="recipient",
     )
-    text = models.TextField()
-    status = models.PositiveSmallIntegerField(
+    text = TextField()
+    status = PositiveSmallIntegerField(
         choices=STATUS.choices,
         default=STATUS.NOT_VIEWED,
     )
@@ -48,16 +55,14 @@ class Message(TimestampMixin, models.Model):
     objects = MessageManager()
 
 
-class File(TimestampMixin, models.Model):
+class File(TimestampMixin, Model):
     """
     File model
     """
 
     document = ContentTypeRestrictedFileField(
-        blank=False,
         upload_to="file/",
-        content_types=("activate"),
     )
-    message = models.ForeignKey(Message, on_delete=models.CASCADE)
+    message = ForeignKey(Message, on_delete=CASCADE)
 
     objects = FileManager()

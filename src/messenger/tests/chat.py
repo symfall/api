@@ -1,15 +1,28 @@
+from asgiref.sync import sync_to_async
+from channels.testing import WebsocketCommunicator
 from django.contrib.auth import get_user_model
+from django.test import TestCase
 from django.urls import reverse
 from freezegun import freeze_time
 from rest_framework.authtoken.models import Token
+from rest_framework.exceptions import AuthenticationFailed
 from rest_framework.test import APITestCase
 
-from messenger.models import Chat
+from messenger.models import Chat, Message
+from messenger.tests import (
+    DeleteWithoutTokenMixin,
+    GetWithoutTokenMixin,
+    PostWithoutTokenMixin,
+    PutWithoutTokenMixin,
+)
+from messenger.websocket.handler import get_ws_application
 
 User = get_user_model()
 
 
-class GetChatViewTest(APITestCase):
+class GetChatViewTest(GetWithoutTokenMixin, APITestCase):
+    url_name = "messenger:chat-list"
+
     @freeze_time("1991-02-20 00:00:00")
     def setUp(self) -> None:
         self.test_creator = User.objects.create_user(
@@ -29,7 +42,7 @@ class GetChatViewTest(APITestCase):
             HTTP_AUTHORIZATION=f"Token {self.test_creator.auth_token.key}"
         )
         response = self.client.get(
-            reverse("messenger:chat-list"), data={"format": "json"}
+            reverse("messenger:chat-list"),
         )
         self.assertEqual(response.status_code, 200)  # pylint: disable=E1101
         self.assertDictEqual(
@@ -60,7 +73,9 @@ class GetChatViewTest(APITestCase):
         )
 
 
-class AddChatViewTest(APITestCase):
+class AddChatViewTest(PostWithoutTokenMixin, APITestCase):
+    url_name = "messenger:chat-list"
+
     def setUp(self) -> None:
         self.test_creator = User.objects.create_user(
             username="test_creator_create", password="12345"
@@ -87,7 +102,9 @@ class AddChatViewTest(APITestCase):
         self.assertEqual(response.status_code, 201)
 
 
-class DeleteChatViewTest(APITestCase):
+class DeleteChatViewTest(DeleteWithoutTokenMixin, APITestCase):
+    url_name = "messenger:chat-detail"
+
     def setUp(self):
         self.test_creator = User.objects.create_user(
             username="test_creator_delete", password="18892"
@@ -109,7 +126,9 @@ class DeleteChatViewTest(APITestCase):
         self.assertEqual(response.status_code, 204)
 
 
-class EditChatViewTest(APITestCase):
+class EditChatViewTest(PutWithoutTokenMixin, APITestCase):
+    url_name = "messenger:chat-detail"
+
     def setUp(self) -> None:
         self.test_creator = User.objects.create_user(
             username="test_creator", password="1234567"
@@ -139,3 +158,51 @@ class EditChatViewTest(APITestCase):
             data=self.edit_chat,
         )
         self.assertEqual(response.status_code, 200)
+
+
+class ChatConsumerTest(TestCase):
+    @freeze_time("1991-02-20 00:00:00")
+    def setUp(self) -> None:
+        self.user = User.objects.create_user(
+            username="test_creator",
+            password="12345",
+            email="test_user@gmail.com",
+        )
+        Token.objects.create(user=self.user)
+        self.chat = Chat.objects.create(
+            title="test-chat",
+            creator=self.user,
+        )
+
+    @sync_to_async
+    def create_message(self):
+        self.message = Message.objects.create(
+            chat=self.chat, text="Hello", sender=self.user
+        )
+
+    async def test_my_consumer(self):
+        communicator = WebsocketCommunicator(
+            application=get_ws_application(),
+            path=f"/ws/chat/{self.chat.id}?token={self.user.auth_token.key}",
+        )
+        await communicator.connect()
+        await self.create_message()
+        message = await communicator.receive_json_from()
+        self.assertEqual(
+            message,
+            {
+                "type": "send_json",
+                "text": "Hello",
+                "created": True,
+                "id": self.message.id,
+            },
+        )
+        await communicator.disconnect()
+
+    async def test_check_if_token_missing(self):
+        communicator = WebsocketCommunicator(
+            application=get_ws_application(),
+            path=f"/ws/chat/{self.chat.id}",
+        )
+        with self.assertRaises(AuthenticationFailed):
+            await communicator.connect()

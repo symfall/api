@@ -95,7 +95,6 @@ class FileViewSet(viewsets.ModelViewSet):
         "get",
         "post",
         "delete",
-        "put",
     )
 
     def get_queryset(self):

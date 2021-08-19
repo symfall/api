@@ -37,6 +37,12 @@ class UserRegisterSerializer(serializers.ModelSerializer):
     A user serializer for registering the user
     """
 
+    activate_url = serializers.URLField(required=False, write_only=True)
+
+    # def get_activate_url(self, instance):
+    #     print(instance)
+    #     return None
+
     class Meta:
         model = User
         fields = (
@@ -46,6 +52,7 @@ class UserRegisterSerializer(serializers.ModelSerializer):
             "password",
             "first_name",
             "last_name",
+            "activate_url",
         )
 
     @staticmethod

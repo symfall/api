@@ -1,13 +1,13 @@
 from django.urls import re_path
 from rest_framework.routers import DefaultRouter
 
-from messenger.consumers import ChatConsumer
 from messenger.views import (
     ChatViewSet,
     FileViewSet,
     MessageViewSet,
     SearchChatViewSet,
 )
+from messenger.websocket.consumers import ChatConsumer
 
 router = DefaultRouter(trailing_slash=False)
 

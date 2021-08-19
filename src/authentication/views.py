@@ -1,14 +1,19 @@
+from urllib.parse import ParseResult, parse_qsl, urlparse, urlunparse
+
 from django.contrib.auth import authenticate, get_user_model, logout
 from django.contrib.auth.tokens import default_token_generator
-from django.contrib.sites.shortcuts import get_current_site
-from django.urls import reverse
 from django.utils.encoding import force_bytes, force_str
-from django.utils.http import urlsafe_base64_decode, urlsafe_base64_encode
+from django.utils.http import (
+    urlencode,
+    urlsafe_base64_decode,
+    urlsafe_base64_encode,
+)
 from drf_yasg.utils import swagger_auto_schema
 from rest_framework import permissions, serializers, status, viewsets
 from rest_framework.authtoken.models import Token
 from rest_framework.decorators import action
 from rest_framework.response import Response
+from rest_framework.reverse import reverse
 
 from authentication.emails import send_activation_email
 from authentication.serializers import (
@@ -154,27 +159,49 @@ class AuthViewSet(viewsets.GenericViewSet):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
 
+        activate_url = None
+        if serializer.validated_data.get("activate_url"):
+            activate_url = serializer.validated_data.pop("activate_url")
+
         user = get_user_model().objects.create_user(
             **serializer.validated_data,
             is_active=False,
         )
         user_serializer = UserSerializer(user)
 
-        activate_url = get_current_site(request).domain + reverse(
-            "authentication:auth-activation",
-            kwargs={
-                "user_id_b64": urlsafe_base64_encode(force_bytes(user.pk)),
-                "token": default_token_generator.make_token(user=user),
-            },
-        )
+        params = {
+            "user_id_b64": urlsafe_base64_encode(force_bytes(user.pk)),
+            "token": default_token_generator.make_token(user=user),
+        }
+
+        if activate_url:
+            url_parts = list(urlparse(activate_url))
+            query = dict(parse_qsl(url_parts[4]))
+            query.update(params)
+            url_parts[4] = urlencode(query)
+            activate_url = urlunparse(url_parts)
+        else:
+            url_parts = urlparse(request.build_absolute_uri())
+            parse_result = ParseResult(
+                scheme=url_parts.scheme,
+                netloc=url_parts.hostname,
+                path=reverse(
+                    "authentication:auth-activate",
+                    kwargs=params,
+                ),
+                params=url_parts.params,
+                query=None,
+                fragment=url_parts.fragment,
+            )
+            activate_url = parse_result.geturl()
 
         send_activation_email(
             recipient_list=[user.email],
             activate_url=activate_url,
         )
-
         return Response(
-            data=user_serializer.data, status=status.HTTP_201_CREATED
+            data=user_serializer.data,
+            status=status.HTTP_201_CREATED,
         )
 
     @swagger_auto_schema(
@@ -187,10 +214,10 @@ class AuthViewSet(viewsets.GenericViewSet):
         detail=False,
         permission_classes=(permissions.AllowAny,),
         serializer_class=UserRegisterSerializer,
-        url_path=r"activation/(?P<user_id_b64>[\d\w-]+)/(?P<token>[\d\w-]+)",
+        url_path=r"activate/(?P<user_id_b64>[\d\w-]+)/(?P<token>[\d\w-]+)",
         pagination_class=None,
     )
-    def activation(self, request, user_id_b64, token):
+    def activate(self, request, user_id_b64, token):
         """
         Activate registered user account
         """
