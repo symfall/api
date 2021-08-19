@@ -12,7 +12,7 @@ and fill them by self values
 
 After that you can start project by this command: 
 ```
-make build
+make build-d
 ```
 Build and start server may take some time ~5min
 

@@ -38,10 +38,11 @@ black = {version = "21.7b0", allow-prereleases = true}
 autoflake = "1.4"
 isort = "5.6.2"
 pylint = "2.9.5"
-pytest-xdist = "2.3.0"
 pylint-django = "2.4.4"
 
 pytest-django = "4.4.0"
+pytest-xdist = "2.3.0"
+pytest-asyncio = "0.15.1"
 pytest-cov = "2.12.1"
 freezegun = "1.1.0"
 coverage = "5.5"

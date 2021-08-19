@@ -5,11 +5,19 @@ from rest_framework.authtoken.models import Token
 from rest_framework.test import APITestCase
 
 from messenger.models import Chat, Message
+from messenger.tests import (
+    DeleteWithoutTokenMixin,
+    GetWithoutTokenMixin,
+    PostWithoutTokenMixin,
+    PutWithoutTokenMixin,
+)
 
 User = get_user_model()
 
 
-class GetMessageViewTest(APITestCase):
+class GetMessageViewTest(GetWithoutTokenMixin, APITestCase):
+    url_name = "messenger:message-list"
+
     @freeze_time("1991-02-20 00:00:00")
     def setUp(self) -> None:
         self.test_sender = User.objects.create_user(
@@ -81,7 +89,9 @@ class GetMessageViewTest(APITestCase):
         )
 
 
-class CreateMessageViewTest(APITestCase):
+class CreateMessageViewTest(PostWithoutTokenMixin, APITestCase):
+    url_name = "messenger:message-list"
+
     def setUp(self) -> None:
         self.test_sender = User.objects.create_user(
             username="test_add_sender", password="1234567"
@@ -109,7 +119,9 @@ class CreateMessageViewTest(APITestCase):
         self.assertEqual(response.status_code, 201)
 
 
-class DeleteMessageViewTest(APITestCase):
+class DeleteMessageViewTest(DeleteWithoutTokenMixin, APITestCase):
+    url_name = "messenger:message-detail"
+
     def setUp(self) -> None:
         self.test_sender = User.objects.create_user(
             username="test_delete_sender", password="1234567"
@@ -125,6 +137,7 @@ class DeleteMessageViewTest(APITestCase):
             text="delete hello world",
             status=2,
         )
+        self.instance = self.test_message
 
     def test_delete_message(self):
         self.client.credentials(
@@ -139,7 +152,9 @@ class DeleteMessageViewTest(APITestCase):
         self.assertEqual(response.status_code, 204)
 
 
-class EditMessageViewTest(APITestCase):
+class EditMessageViewTest(PutWithoutTokenMixin, APITestCase):
+    url_name = "messenger:message-detail"
+
     @freeze_time("1991-02-20 00:00:00")
     def setUp(self) -> None:
         self.test_sender = User.objects.create_user(

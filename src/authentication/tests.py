@@ -1,3 +1,5 @@
+from unittest import mock
+
 from django.contrib.auth import get_user_model
 from django.contrib.auth.tokens import default_token_generator
 from django.utils.encoding import force_bytes
@@ -48,13 +50,44 @@ class AddUserViewTest(APITestCase):
             },
         )
 
-    def test_user_register(self):
+    @mock.patch("authentication.views.send_activation_email")
+    def test_user_register_without_activate_url(self, send_mail_mocked):
         response = self.client.post(
             path=reverse("authentication:auth-register"),
             data={
                 "username": "username",
                 "password": "1234567!",
                 "email": "test_user_register@mail.com",
+            },
+            HTTP_Origin="http://testserver",
+        )
+        registered_user = User.objects.get(username="username")
+        self.assertDictEqual(
+            response.data,
+            {
+                "id": registered_user.id,
+                "auth_token": None,
+                "username": "username",
+                "email": "test_user_register@mail.com",
+                "last_login": None,
+                "first_name": "",
+                "last_name": "",
+            },
+        )
+        self.assertRegex(
+            send_mail_mocked.call_args.kwargs["activate_url"],
+            r"http://testserver/(.+)",
+        )
+
+    @mock.patch("authentication.views.send_activation_email")
+    def test_user_register_with_activate_url(self, send_mail_mocked):
+        response = self.client.post(
+            path=reverse("authentication:auth-register"),
+            data={
+                "username": "username",
+                "password": "1234567!",
+                "email": "test_user_register@mail.com",
+                "activate_url": "http://test.com/activate",
             },
         )
         registered_user = User.objects.get(username="username")
@@ -70,6 +103,10 @@ class AddUserViewTest(APITestCase):
                 "last_name": "",
             },
         )
+        self.assertRegex(
+            send_mail_mocked.call_args.kwargs["activate_url"],
+            r"http://test.com/activate(.+)",
+        )
 
     def test_user_activation(self):
         user_id_b64 = urlsafe_base64_encode(force_bytes(self.user.pk))
@@ -77,7 +114,7 @@ class AddUserViewTest(APITestCase):
 
         response = self.client.get(
             path=reverse(
-                "authentication:auth-activation",
+                "authentication:auth-activate",
                 kwargs={
                     "user_id_b64": user_id_b64,
                     "token": token,

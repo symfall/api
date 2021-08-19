@@ -7,20 +7,16 @@ It exposes the ASGI callable as a module-level variable named ``application``.
 
 import os
 
-from channels.routing import ProtocolTypeRouter, URLRouter
-from channels.security.websocket import AllowedHostsOriginValidator
+from channels.routing import ProtocolTypeRouter
 from django.core.asgi import get_asgi_application
 
-from messenger.middleware import TokenAuthMiddleware
-from messenger.routers import websocket_urlpatterns
+from messenger.websocket.handler import get_ws_application
 
 os.environ.setdefault("DJANGO_SETTINGS_MODULE", "settings.default")
 
 application = ProtocolTypeRouter(
     {
         "http": get_asgi_application(),
-        "websocket": AllowedHostsOriginValidator(
-            TokenAuthMiddleware(URLRouter(websocket_urlpatterns)),
-        ),
+        "websocket": get_ws_application(),
     }
 )
