@@ -1,3 +1,6 @@
+import os
+from unittest import skipIf
+
 from asgiref.sync import sync_to_async
 from channels.testing import WebsocketCommunicator
 from django.contrib.auth import get_user_model
@@ -160,6 +163,10 @@ class EditChatViewTest(PutWithoutTokenMixin, APITestCase):
         self.assertEqual(response.status_code, 200)
 
 
+@skipIf(
+    os.getenv("DEPLOYMENT_ARCHITECTURE") == "test",
+    "Don't check in CI/CD flow"
+)
 class ChatConsumerTest(TestCase):
     @freeze_time("1991-02-20 00:00:00")
     def setUp(self) -> None:
