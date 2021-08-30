@@ -1,4 +1,6 @@
 import io
+import os
+from unittest import skipIf
 from urllib.parse import urljoin
 
 from django.contrib.auth import get_user_model
@@ -90,6 +92,10 @@ class GetFileViewTest(GetWithoutTokenMixin, APITestCase):
         )
 
 
+@skipIf(
+    os.getenv("DEPLOYMENT_ARCHITECTURE") == "test",
+    "Don't check in CI/CD flow"
+)
 class CreateFileViewTest(PostWithoutTokenMixin, APITestCase):
     url_name = "messenger:file-list"
 
