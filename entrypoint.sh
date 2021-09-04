@@ -10,5 +10,15 @@ fi
 # Run migrations
 python "$PWD"/manage.py migrate
 
+
 # Run server
-python "$PWD"/manage.py runserver 0.0.0.0:8000
+if [ "$DEPLOYMENT_ARCHITECTURE" = "local" ]; then
+
+  python "$PWD"/manage.py runserver 0.0.0.0:8000
+
+else
+
+  daphne -b 0.0.0.0 -p 8000 src.server.asgi:application
+
+fi
+

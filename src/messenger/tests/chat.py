@@ -123,7 +123,7 @@ class DeleteChatViewTest(DeleteWithoutTokenMixin, APITestCase):
         )
         response = self.client.delete(
             reverse(
-                "messenger:chat-detail", args=(str(self.test_chat_delete.pk),)
+                "messenger:chat-detail", args=(self.test_chat_delete.pk,)
             )
         )
         self.assertEqual(response.status_code, 204)
@@ -156,7 +156,7 @@ class EditChatViewTest(PutWithoutTokenMixin, APITestCase):
         response = self.client.put(
             reverse(
                 "messenger:chat-detail",
-                kwargs={"pk": str(self.test_chat_edit.pk)},
+                kwargs={"pk": self.test_chat_edit.pk},
             ),
             data=self.edit_chat,
         )
