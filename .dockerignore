@@ -6,3 +6,8 @@ __pycache__
 *$py.class
 Makefile
 README*
+media/
+.pytest_cache/
+.mypy_cache/
+static/
+aws/
