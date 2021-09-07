@@ -202,7 +202,7 @@ class DeleteFileTest(DeleteWithoutTokenMixin, APITestCase):
         )
         response = self.client.delete(
             reverse(
-                "messenger:file-detail", kwargs={"pk": str(self.test_file.pk)}
+                "messenger:file-detail", kwargs={"pk": self.test_file.pk}
             )
         )
         self.assertEqual(response.status_code, 204)

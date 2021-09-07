@@ -1,6 +1,6 @@
 # Symfall Messenger
 
-[![Symfall API CI/CD](https://github.com/symfall/api/actions/workflows/app.yml/badge.svg?branch=develop)](https://github.com/symfall/api/actions/workflows/app.yml)
+[![Symfall CI/CD Flow](https://github.com/symfall/api/actions/workflows/aws.yml/badge.svg?branch=develop)](https://github.com/symfall/api/actions/workflows/aws.yml)
 
 Symfall is a small messenger project. This project is a simple chat,
 where you can correspond with friends and colleagues like Telegram or Viber, but this project don't have a call functions. 
@@ -38,8 +38,8 @@ To start linter you need write
 make lint
 ```
 
-## Formatting
+## Formatting:
 To start format you need write
-```shell
+```
 make perform
 ```

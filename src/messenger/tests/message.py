@@ -42,7 +42,7 @@ class GetMessageViewTest(GetWithoutTokenMixin, APITestCase):
         )
         response = self.client.get(
             reverse("messenger:message-list"),
-            data={"chat": str(self.test_chat.id), "format": "json"},
+            data={"chat": self.test_chat.id, "format": "json"},
         )
         self.assertEqual(response.status_code, 200)
         self.assertDictEqual(
@@ -102,8 +102,8 @@ class CreateMessageViewTest(PostWithoutTokenMixin, APITestCase):
             creator=self.test_sender,
         )
         self.message = {
-            "sender": str(self.test_sender.pk),
-            "chat": str(self.test_chat.pk),
+            "sender": self.test_sender.pk,
+            "chat": self.test_chat.pk,
             "text": "add new hello world",
             "status": 1,
         }
@@ -172,8 +172,8 @@ class EditMessageViewTest(PutWithoutTokenMixin, APITestCase):
             status=2,
         )
         self.edit_message = {
-            "sender": str(self.test_sender.pk),
-            "chat": str(self.test_chat.pk),
+            "sender": self.test_sender.pk,
+            "chat": self.test_chat.pk,
             "text": "edit hello world",
         }
 
@@ -184,7 +184,7 @@ class EditMessageViewTest(PutWithoutTokenMixin, APITestCase):
         response = self.client.put(
             reverse(
                 "messenger:message-detail",
-                kwargs={"pk": str(self.test_message.pk)},
+                kwargs={"pk": self.test_message.pk},
             ),
             data=self.edit_message,
         )
