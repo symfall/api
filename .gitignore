@@ -56,6 +56,8 @@ coverage.xml
 *.log
 local_settings.py
 db.sqlite3
+media/
+static/
 
 # Flask stuff:
 instance/
@@ -113,3 +115,6 @@ dmypy.json
 # IDE
 .idea/
 .vscode/
+
+# AWS
+aws/

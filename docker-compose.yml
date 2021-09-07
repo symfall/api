@@ -1,50 +1,28 @@
-version: "3.5"
-
-volumes:
-  storage_data_vol:
-    external: false
-  item_data_vol:
-    external: false
+version: "3.9"
 
 services:
 
-  application:
-    build: .
-    restart: always
-    entrypoint: /code/entrypoint.sh
-    user: "1000:1000"
-    volumes:
-      - type: bind
-        source: .
-        target: /code
-    ports:
-      - "8000:8000"
-    depends_on:
-      - postgres
+    db:
+      image: postgres:13.3
+      environment:
+        - POSTGRES_PASSWORD=postgres
+      ports:
+        - "127.0.0.1:5432:5432"
 
-  postgres:
-    image: postgres:latest
-    restart: on-failure
-    volumes:
-      - item_data_vol:/var/lib/postgresql/data
-    ports:
-      - "5432:5432"
-    environment:
-        - POSTGRES_USER=user
-        - POSTGRES_PASSWORD=example
-        - POSTGRES_DB=example
+    redis:
+      image: redis:6
+      ports:
+        - "127.0.0.1:6379:6379"
 
-  minio:
-    image: minio/minio:latest
-    restart: on-failure
-    environment:
-      MINIO_ACCESS_KEY: minio
-      MINIO_SECRET_KEY: minio123
-    ports:
-      - "9000:9000"
-    volumes:
-      - storage_data_vol:/data
-    command: minio server /data
-
-  redis:
-    image: redis:latest
+    api:
+      build: .
+      entrypoint: /home/user/entrypoint.sh
+      working_dir: /home/user/src
+      volumes:
+        - ./src:/home/user/src
+      ports:
+        - "127.0.0.1:8000:8000"
+      env_file: .env
+      depends_on:
+        - db
+        - redis

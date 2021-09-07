@@ -1,11 +1,20 @@
-FROM python:3.6
+FROM python:3.9.7-slim
 
-# Copy source code of the project
-WORKDIR /code
-COPY . .
+ENV PYTHONUNBUFFERED 1
+ENV PIP_DISABLE_PIP_VERSION_CHECK 1
 
-# Install needs libraries
 RUN apt-get update && \
-    apt-get -y install entr && \
-    pip install pipenv && \
-    pipenv install -v --system --deploy --dev
+    apt-get install gcc -y && \
+    apt-get clean && rm -rf /var/lib/apt/lists/*
+
+RUN useradd -m user
+USER user
+WORKDIR /home/user
+
+ENV PATH=/home/user/.local/bin:${PATH}
+COPY --chown=user:user . .
+
+RUN pip install --upgrade pip && \
+    pip install --user poetry==1.1.7 && \
+    poetry config virtualenvs.create false && \
+    poetry export --without-hashes | poetry run pip install -r /dev/stdin
