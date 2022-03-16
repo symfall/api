@@ -4,8 +4,8 @@ from django.template.loader import get_template
 
 
 def get_render_template(template_name, context):
-    email_txt = get_template("{}.txt".format(template_name))
-    email_html = get_template("{}.html".format(template_name))
+    email_txt = get_template(f"{template_name}.txt")
+    email_html = get_template(f"{template_name}.html")
 
     email_txt_content = email_txt.render(context)
     email_html_content = email_html.render(context)

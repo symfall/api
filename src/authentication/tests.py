@@ -1,22 +1,17 @@
 from unittest import mock
 
-from django.contrib.auth import get_user_model
 from django.contrib.auth.tokens import default_token_generator
 from django.utils.encoding import force_bytes
 from django.utils.http import urlsafe_base64_encode
 from rest_framework.reverse import reverse
 from rest_framework.test import APITestCase
 
-User = get_user_model()
+from messenger.tests.factory import UserFactory
 
 
 class AddUserViewTest(APITestCase):
     def setUp(self) -> None:
-        self.user = User.objects.create_user(
-            username="test_user",
-            password="1234567",
-            email="test_user@gmail.com",
-        )
+        self.user = UserFactory()
 
     def test_user_logout(self):
         response = self.client.post(
@@ -32,23 +27,12 @@ class AddUserViewTest(APITestCase):
         response = self.client.post(
             path=reverse("authentication:auth-login"),
             data={
-                "username": "test_user",
-                "password": "1234567",
-                "email": "test_user@gmail.com",
+                "username": self.user.username,
+                "password": "password",
+                "email": self.user.email,
             },
         )
-        self.assertDictEqual(
-            response.data,
-            {
-                "id": self.user.id,
-                "auth_token": None,
-                "username": "test_user",
-                "email": "test_user@gmail.com",
-                "last_login": None,
-                "first_name": "",
-                "last_name": "",
-            },
-        )
+        self.assertEqual(response.data["id"], self.user.id)
 
     @mock.patch("authentication.views.send_activation_email")
     def test_user_register_without_activate_url(self, send_mail_mocked):
@@ -61,19 +45,7 @@ class AddUserViewTest(APITestCase):
             },
             HTTP_Origin="http://testserver",
         )
-        registered_user = User.objects.get(username="username")
-        self.assertDictEqual(
-            response.data,
-            {
-                "id": registered_user.id,
-                "auth_token": None,
-                "username": "username",
-                "email": "test_user_register@mail.com",
-                "last_login": None,
-                "first_name": "",
-                "last_name": "",
-            },
-        )
+        self.assertEqual(response.data["username"], "username")
         self.assertRegex(
             send_mail_mocked.call_args.kwargs["activate_url"],
             r"http://testserver/(.+)",
@@ -90,19 +62,7 @@ class AddUserViewTest(APITestCase):
                 "activate_url": "http://test.com/activate",
             },
         )
-        registered_user = User.objects.get(username="username")
-        self.assertDictEqual(
-            response.data,
-            {
-                "id": registered_user.id,
-                "auth_token": None,
-                "username": "username",
-                "email": "test_user_register@mail.com",
-                "last_login": None,
-                "first_name": "",
-                "last_name": "",
-            },
-        )
+        self.assertEqual(response.data["username"], "username")
         self.assertRegex(
             send_mail_mocked.call_args.kwargs["activate_url"],
             r"http://test.com/activate(.+)",

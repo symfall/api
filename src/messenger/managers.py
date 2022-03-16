@@ -40,7 +40,7 @@ class ChatManager(Manager):
         )
 
 
-class MessageManager(Manager):  # pylint: disable=too-few-public-methods
+class MessageManager(Manager):  # noqa
     """
     Message manager
     """
@@ -58,7 +58,7 @@ class MessageManager(Manager):  # pylint: disable=too-few-public-methods
         )
 
 
-class FileManager(Manager):  # pylint: disable=too-few-public-methods
+class FileManager(Manager):  # noqa
     """
     File manager
     """

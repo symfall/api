@@ -12,7 +12,7 @@ from sentry_sdk.integrations.django import DjangoIntegration
 
 PROJECT_NAME = "Symfall"
 
-sentry_sdk.init(  # pylint: disable=E0110
+sentry_sdk.init(  # noqa
     dsn=os.getenv("SENTRY_DSN"),
     integrations=[DjangoIntegration()],
     # Set traces_sample_rate to 1.0 to capture 100%
@@ -179,10 +179,12 @@ CHANNEL_LAYERS = {
     "default": {
         "BACKEND": "channels_redis.core.RedisChannelLayer",
         "CONFIG": {
-            "hosts": [(
-                os.getenv("CACHE_HOST", "redis"),
-                int(os.getenv("CACHE_PORT", "6379")),
-            )],
+            "hosts": [
+                (
+                    os.getenv("CACHE_HOST", "redis"),
+                    int(os.getenv("CACHE_PORT", "6379")),
+                )
+            ],
         },
     },
 }

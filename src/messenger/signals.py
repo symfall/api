@@ -9,9 +9,7 @@ from messenger.models import File, Message
 
 
 @receiver(post_save, sender=Message)
-def send_message_to_ws(
-    sender, instance, created, **kwargs  # pylint: disable=W0613
-):
+def send_message_to_ws(sender, instance, created, **kwargs):  # noqa
     """
     Send message data to the WebSockets
     """
@@ -28,7 +26,7 @@ def send_message_to_ws(
 
 
 @receiver(post_delete, sender=File)
-def delete_physical_file(sender, instance, **kwargs):  # pylint: disable=W0613
+def delete_physical_file(sender, instance, **kwargs):  # noqa
     """
     Delete physical file from File System
     """

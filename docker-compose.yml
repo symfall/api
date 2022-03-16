@@ -16,10 +16,10 @@ services:
 
     api:
       build: .
-      entrypoint: /home/user/entrypoint.sh
-      working_dir: /home/user/src
+      entrypoint: /home/user/app/entrypoint.sh
+      working_dir: /home/user/app/src
       volumes:
-        - ./src:/home/user/src
+        - .:/home/user/app
       ports:
         - "127.0.0.1:8000:8000"
       env_file: .env

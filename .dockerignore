@@ -11,3 +11,5 @@ media/
 .mypy_cache/
 static/
 aws/
+tests/
+tests*

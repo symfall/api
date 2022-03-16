@@ -19,15 +19,15 @@ class UserSerializer(serializers.ModelSerializer):
         )
 
 
-class EmptySerializer(serializers.Serializer):  # pylint: disable=W0223
+class EmptySerializer(serializers.Serializer):  # noqa
     pass
 
 
-class SuccessSerializer(serializers.Serializer):  # pylint: disable=W0223
+class SuccessSerializer(serializers.Serializer):  # noqa
     success = serializers.CharField(default="All right")
 
 
-class LoginSerializer(serializers.Serializer):  # pylint: disable=W0223
+class LoginSerializer(serializers.Serializer):  # noqa
     username = serializers.CharField(max_length=32, required=True)
     password = serializers.CharField(required=True)
 
@@ -67,7 +67,7 @@ class UserRegisterSerializer(serializers.ModelSerializer):
         return value
 
 
-class PasswordChangeSerializer(serializers.Serializer):  # pylint:disable=W0223
+class PasswordChangeSerializer(serializers.Serializer):  # noqa
     """
     Password Changer
     """
