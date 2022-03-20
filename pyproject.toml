@@ -22,7 +22,7 @@ django-filter = "2.4.0"
 django-storages = "1.11.1"
 
 Faker = "8.10.3"
-Pillow = "8.2.0"
+Pillow = "9.0.1"
 
 channels = "3.0.3"
 channels-redis = "3.2.0"
