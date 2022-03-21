@@ -36,5 +36,6 @@ websocket_urlpatterns = [
     re_path(
         route=r"ws/chat/(?P<chat_id>\d+)$",
         view=ChatConsumer.as_asgi(),
+        name="chat-poll",
     ),
 ]

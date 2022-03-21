@@ -1,7 +1,7 @@
-from .default import *  # pylint: disable=unused-wildcard-import,wildcard-import
+from .default import *  # noqa
 
 DEBUG = False
 
-REST_FRAMEWORK["DEFAULT_RENDERER_CLASSES"] = (
+REST_FRAMEWORK["DEFAULT_RENDERER_CLASSES"] = (  # noqa
     "rest_framework.renderers.JSONRenderer",
 )

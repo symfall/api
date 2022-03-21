@@ -59,13 +59,10 @@ shell: ## Exec shell
 	docker-compose -f $(or $(DOCKER_COMPOSE_FILE), docker-compose.yml) exec $(or $(c), api) python manage.py shell_plus
 
 test: ## Run tests
-	docker-compose -f $(or $(DOCKER_COMPOSE_FILE), docker-compose.yml) exec $(or $(c), api) pytest $(or $(e), .)
+	docker-compose -f $(or $(DOCKER_COMPOSE_FILE), docker-compose.yml) exec $(or $(c), api) python manage.py test --keepdb --parallel 4 $(or $(e), .)
 
-cov:
-	docker-compose -f $(or $(DOCKER_COMPOSE_FILE), docker-compose.yml) exec $(or $(c), api) pytest --cov=. --cov-config=../.coveragerc --no-cov-on-fail --cov-fail-under=90 $(or $(e), .)
-
-coverage: ## Run tests
-	docker-compose -f $(or $(DOCKER_COMPOSE_FILE), docker-compose.yml) exec $(or $(c), api) coverage run --rcfile=../.coveragerc -m pytest $(or $(e), .)
+coverage: ## Run coverage tests
+	docker-compose -f $(or $(DOCKER_COMPOSE_FILE), docker-compose.yml) exec $(or $(c), api) coverage run --rcfile=../.coveragerc $(or $(e), .)
 	docker-compose -f $(or $(DOCKER_COMPOSE_FILE), docker-compose.yml) exec $(or $(c), api) coverage report --fail-under=90 -m
 
 perform: ## Perform code by black, isort and autoflake
@@ -73,7 +70,10 @@ perform: ## Perform code by black, isort and autoflake
 	docker-compose -f $(or $(DOCKER_COMPOSE_FILE), docker-compose.yml) exec $(or $(c), api) isort $(or $(e), .)
 	docker-compose -f $(or $(DOCKER_COMPOSE_FILE), docker-compose.yml) exec $(or $(c), api) autoflake --in-place --remove-all-unused-imports --recursive $(or $(e), .)
 
-lint: ## Check code by pylint
-	docker-compose -f $(or $(DOCKER_COMPOSE_FILE), docker-compose.yml) exec $(or $(c), api) pylint --load-plugins pylint_django --django-settings-module=settings $(or $(e), ../src)
+lint: ## Check code by prospector
+	docker-compose -f $(or $(DOCKER_COMPOSE_FILE), docker-compose.yml) exec -w /home/user/app $(or $(c), api) prospector $(or $(e), src)
+
+type: ## Check code by pytype
+	docker-compose -f $(or $(DOCKER_COMPOSE_FILE), docker-compose.yml) exec -w /home/user/app $(or $(c), api) pytype $(or $(e), src)
 
 quality: perform lint test health-check

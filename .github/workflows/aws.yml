@@ -19,8 +19,8 @@ jobs:
           docker-compose run -e DEPLOYMENT_ARCHITECTURE=test -e SECRET_KEY=secret_test_key \
            --entrypoint="" -T api bash -c \
           "poetry export --without-hashes --dev | poetry run pip install -r /dev/stdin && \
-           pylint --load-plugins pylint_django --django-settings-module=settings ../src && \
-           pytest -n 4 ."
+           prospector ../src && \
+           python manage.py tests"
 
   build:
     name: Build
