@@ -46,8 +46,13 @@ class AuthViewSet(viewsets.GenericViewSet):
         pagination_class=None,
     )
     def user(self, request):
-        """
-        Retrieve basic data of current user
+        """Retrieves basic data of current user
+
+        Args:
+            request: Django Request Instance
+
+        Returns:
+            response: Response
         """
         user_serializer = UserSerializer(request.user)
 
@@ -70,10 +75,16 @@ class AuthViewSet(viewsets.GenericViewSet):
     )
     def login(self, request):
         """
-        Endpoint which check username and password
-        If these params are right and username exists in database
-        and password is correct for the username than
-        we will login user to the system
+        Calls Django login method
+
+        Args:
+            request: Django Request Instance
+
+        Returns:
+            response: Response
+
+        Raises:
+            ValidationError: If serializer validation fails
         """
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -103,9 +114,15 @@ class AuthViewSet(viewsets.GenericViewSet):
         pagination_class=None,
     )
     def logout(self, request):
-        """
-        Calls Django logout method;
+        """Calls Django logout method;
+
         Does not work for UserTokenAuth.
+
+        Args:
+            request: Django Request Instance
+
+        Returns:
+            response: Response
         """
         logout(request)
 
@@ -153,8 +170,13 @@ class AuthViewSet(viewsets.GenericViewSet):
         serializer_class=UserRegisterSerializer,
     )
     def register(self, request):
-        """
-        Register user with email, name and password data
+        """Register user with email, name and password data
+
+        Args:
+            request: Django Request Instance
+
+        Returns:
+            response: Response
         """
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
@@ -218,8 +240,15 @@ class AuthViewSet(viewsets.GenericViewSet):
         pagination_class=None,
     )
     def activate(self, request, user_id_b64, token):
-        """
-        Activate registered user account
+        """Activate registered user account
+
+        Args:
+            request: Django Request Instance
+            user_id_b64: User ID in base 64
+            token: Token
+
+        Returns:
+            response: Response
         """
         try:
             uid = force_str(urlsafe_base64_decode(user_id_b64))

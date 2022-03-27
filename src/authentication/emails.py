@@ -17,8 +17,11 @@ def send_activation_email(
     recipient_list=None,
     activate_url=None,
 ):
-    """
-    Send activation email with html template to recipient_list
+    """Send activation email with html template to recipient_list
+
+    Args:
+        recipient_list: List of recipients
+        activate_url: url for the activating an account
     """
     subject = "Thank you for your registration!"
     from_email = settings.EMAIL_HOST_USER

@@ -19,8 +19,8 @@ jobs:
           docker-compose run -e DEPLOYMENT_ARCHITECTURE=test -e SECRET_KEY=secret_test_key \
            --entrypoint="" -T api bash -c \
           "poetry export --without-hashes --dev | poetry run pip install -r /dev/stdin && \
-           prospector ../src && \
-           python manage.py tests"
+           prospector ../src --profile=../prospector.yml && \
+           python manage.py test"
 
   build:
     name: Build

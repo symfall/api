@@ -26,8 +26,14 @@ SchemaView = get_schema_view(
 
 
 def trigger_error(request):
-    """
-    Sentry Test function with ZeroDivisionError
+    """Sentry Test function with ZeroDivisionError
+
+    Args:
+        request: Django Request Instance
+
+    Returns:
+        Returns nothing because its debug function
+         with ZeroDivision error for Sentry
     """
     return request, 1 / 0
 
