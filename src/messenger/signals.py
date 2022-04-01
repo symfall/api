@@ -10,8 +10,13 @@ from messenger.models import File, Message
 
 @receiver(post_save, sender=Message)
 def send_message_to_ws(sender, instance, created, **kwargs):  # noqa
-    """
-    Send message data to the WebSockets
+    """Send message data to the WebSockets
+
+    Args:
+        sender: sender of the signal
+        instance: instance of the model
+        created: boolean
+        kwargs: additional arguments
     """
     channel_layer = get_channel_layer()
     async_to_sync(channel_layer.group_send)(
@@ -27,8 +32,12 @@ def send_message_to_ws(sender, instance, created, **kwargs):  # noqa
 
 @receiver(post_delete, sender=File)
 def delete_physical_file(sender, instance, **kwargs):  # noqa
-    """
-    Delete physical file from File System
+    """Delete physical file from File System
+
+    Args:
+        sender: sender of the signal
+        instance: instance of the model
+        kwargs: additional arguments
     """
     if instance.document and instance.document.path:
         os.remove(instance.document.path)
