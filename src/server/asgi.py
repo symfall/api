@@ -12,7 +12,7 @@ from django.core.asgi import get_asgi_application
 
 from messenger.websocket.handler import get_ws_application
 
-os.environ.setdefault("DJANGO_SETTINGS_MODULE", "settings.default")
+os.environ.setdefault("DJANGO_SETTINGS_MODULE", "settings")
 
 application = ProtocolTypeRouter(
     {

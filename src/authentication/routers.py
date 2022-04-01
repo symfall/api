@@ -1,6 +1,6 @@
 from rest_framework.routers import DefaultRouter
 
-from authentication.views import AuthViewSet
+from authentication.api.v1.views import AuthViewSet
 
 router = DefaultRouter(trailing_slash=False)
 

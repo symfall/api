@@ -6,7 +6,7 @@ from django.utils.http import urlsafe_base64_encode
 from rest_framework.reverse import reverse
 from rest_framework.test import APITestCase
 
-from messenger.tests.factory import UserFactory
+from authentication.tests.factory import UserFactory
 
 
 class AddUserViewTest(APITestCase):
@@ -34,7 +34,7 @@ class AddUserViewTest(APITestCase):
         )
         self.assertEqual(response.data["id"], self.user.id)
 
-    @mock.patch("authentication.views.send_activation_email")
+    @mock.patch("authentication.api.v1.views.send_activation_email")
     def test_user_register_without_activate_url(self, send_mail_mocked):
         response = self.client.post(
             path=reverse("authentication:auth-register"),
@@ -51,7 +51,7 @@ class AddUserViewTest(APITestCase):
             r"http://testserver/(.+)",
         )
 
-    @mock.patch("authentication.views.send_activation_email")
+    @mock.patch("authentication.api.v1.views.send_activation_email")
     def test_user_register_with_activate_url(self, send_mail_mocked):
         response = self.client.post(
             path=reverse("authentication:auth-register"),

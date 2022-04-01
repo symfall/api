@@ -1,14 +1,14 @@
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, mixins, viewsets
 
-from messenger.models import Chat, File, Message
-from messenger.serializers import (
+from messenger.api.v1.serializers import (
     ChatSerializer,
     ChatViewSerializer,
     FileSerializer,
     MessageSerializer,
     MessageViewSerializer,
 )
+from messenger.models import Chat, File, Message
 
 
 class ChatViewSet(viewsets.ModelViewSet):
@@ -16,17 +16,14 @@ class ChatViewSet(viewsets.ModelViewSet):
     API endpoint that allows chats to be viewed or edited.
     """
 
-    lookup_value_regex = r"\d+"
-    filter_backends = (
-        DjangoFilterBackend,
-        filters.OrderingFilter,
-    )
+    filter_backends = (DjangoFilterBackend, filters.OrderingFilter)
     ordering = ("-created_at",)
     http_method_names = (
         "get",
         "post",
         "delete",
         "put",
+        "patch",
     )
 
     def get_serializer_class(self):
@@ -71,6 +68,7 @@ class MessageViewSet(viewsets.ModelViewSet):
         "post",
         "delete",
         "put",
+        "patch",
     )
 
     def get_serializer_class(self):

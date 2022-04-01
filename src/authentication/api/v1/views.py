@@ -15,8 +15,7 @@ from rest_framework.decorators import action
 from rest_framework.response import Response
 from rest_framework.reverse import reverse
 
-from authentication.emails import send_activation_email
-from authentication.serializers import (
+from authentication.api.v1.serializers import (
     EmptySerializer,
     LoginSerializer,
     PasswordChangeSerializer,
@@ -24,6 +23,7 @@ from authentication.serializers import (
     UserRegisterSerializer,
     UserSerializer,
 )
+from authentication.emails import send_activation_email
 
 User = get_user_model()
 

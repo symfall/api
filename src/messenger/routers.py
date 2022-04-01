@@ -1,7 +1,7 @@
 from django.urls import re_path
 from rest_framework.routers import DefaultRouter
 
-from messenger.views import (
+from messenger.api.v1.views import (
     ChatViewSet,
     FileViewSet,
     MessageViewSet,
