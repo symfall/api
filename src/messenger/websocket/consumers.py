@@ -20,7 +20,7 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
         await self.accept()
 
     async def disconnect(self, code):
-        """ Leave the room
+        """Leave the room
 
         Args:
             code: Code of disconnect
@@ -28,7 +28,7 @@ class ChatConsumer(AsyncJsonWebsocketConsumer):
         await self.channel_layer.group_discard(self.chat_id, self.channel_name)
 
     async def send_message(self, response):
-        """ Receive message from room group
+        """Receive message from room group
 
         Args:
             response: Message from room group

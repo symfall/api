@@ -222,6 +222,11 @@ DATABASES = {
     }
 }
 
+ELASTICSEARCH_DSL = {
+    "default": {
+        "hosts": os.getenv("ELASTICSEARCH_HOST", "elasticsearch:9200")
+    },
+}
 
 # Password validation
 
