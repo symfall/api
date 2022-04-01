@@ -51,14 +51,22 @@ urlpatterns = [
         SchemaView.with_ui("swagger", cache_timeout=0),
         name="schema-swagger-ui",
     ),
+    re_path(
+        r"^redoc/$",
+        SchemaView.with_ui("redoc", cache_timeout=0),
+        name="schema-redoc",
+    ),
     path(
-        "api/",
-        include((authentication.urls, "authentication")),
+        "api/v1/",
+        include(
+            arg=(authentication.urls, "authentication"),
+            namespace="v1:authentication",
+        ),
         name="api",
     ),
     path(
-        "api/",
-        include((messenger.urls, "messenger")),
+        "api/v1/",
+        include(arg=(messenger.urls, "messenger"), namespace="v1:messenger"),
         name="api",
     ),
 ] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

@@ -2,8 +2,8 @@ from django.contrib.auth import get_user_model
 from rest_framework import serializers
 from rest_framework.fields import ChoiceField
 
-from .choices import STATUS
-from .models import Chat, File, Message
+from messenger.choices import STATUS
+from messenger.models import Chat, File, Message
 
 User = get_user_model()
 

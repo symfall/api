@@ -148,7 +148,8 @@ REST_FRAMEWORK = {
         "rest_framework.parsers.MultiPartParser",
         "rest_framework.parsers.FileUploadParser",
     ),
-    "DEFAULT_VERSIONING_CLASS": "rest_framework.versioning.URLPathVersioning",
+    "DEFAULT_VERSIONING_CLASS": "rest_framework.versioning."
+    "NamespaceVersioning",
     "PAGE_SIZE": 20,
 }
 SWAGGER_SETTINGS = {
